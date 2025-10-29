@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: reward-service
+  data:
+    mongodb:
+      uri: mongodb+srv://nadeemshaik0513_db_user:qEevah6NuwFhKUzi@java.xc442yz.mongodb.net/?appName=Java
+      database: Java
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+server:
+  port: 8084
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
