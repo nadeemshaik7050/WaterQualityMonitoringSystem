@@ -35,6 +35,22 @@ public class UserController {
         return CrowdDataResponse.success(userService.getAllUsers());
     }
 
+    @GetMapping("/count")
+    @PreAuthorize("hasRole('wqm-admin')")
+    public CrowdDataResponse<Long> getUserCount() {
+        return CrowdDataResponse.success(userService.getUserCount());
+    }
 
+    @PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('wqm-admin')")
+    public void updateUser(@RequestBody UserRequestDto userRequestDto) throws CrowdDataSourceException {
+        userService.updateUser(userRequestDto);
+    }
+
+    @GetMapping("/toggleActivate")
+    @PreAuthorize("hasRole('wqm-admin')")
+    public void toggleActivateUser(@RequestParam String userId) throws CrowdDataSourceException {
+        userService.toggleActivateUser(userId);
+    }
 
 }

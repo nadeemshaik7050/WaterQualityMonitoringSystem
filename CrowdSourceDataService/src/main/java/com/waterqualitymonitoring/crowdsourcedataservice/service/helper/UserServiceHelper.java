@@ -58,6 +58,8 @@ public class UserServiceHelper {
         userRequestDto.setUserId(createUserinKeycloak(userRequestDto));
         userRequestDto.setJoinedDate(LocalDate.now());
         User user = userMapper.toEntity(userRequestDto);
+        user.setPoints(0L);
+        user.setNumberOfRewardsGiven(0L);
         userRepository.save(user);
     }
 
@@ -122,5 +124,31 @@ public class UserServiceHelper {
             userResponseDtos.add(userMapper.toDto(user));
         }
         return userResponseDtos;
+    }
+
+    public Long getUserCount() {
+        return userRepository.countByIsActiveTrue();
+    }
+
+    public void updateUser(UserRequestDto userRequestDto) throws CrowdDataSourceException {
+        User existingUser = userRepository.findByUserNameAndIsActiveTrue(userRequestDto.getUserName());
+        if (existingUser != null) {
+            existingUser.setFirstName(userRequestDto.getFirstName());
+            existingUser.setLastName(userRequestDto.getLastName());
+            existingUser.setEmail(userRequestDto.getEmail());
+            userRepository.save(existingUser);
+            return;
+        }
+        throw new CrowdDataSourceException(CrowdDataSourceError.USER_NOT_FOUND);
+    }
+
+    public void toggleActivateUser(String userId) throws CrowdDataSourceException {
+        User user = userRepository.findByUserId(userId);
+        if (user != null) {
+            user.setActive(!user.isActive());
+            userRepository.save(user);
+            return;
+        }
+        throw new CrowdDataSourceException(CrowdDataSourceError.USER_NOT_FOUND);
     }
 }

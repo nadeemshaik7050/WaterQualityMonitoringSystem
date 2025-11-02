@@ -17,4 +17,6 @@ public class UserResponseDto {
     private String gender;
     private String phoneNumber;
     private LocalDate joinedDate;
+    private Long points;
+    private Long numberOfRewardsGiven;
 }

@@ -25,4 +25,6 @@ public class User extends AbstractEntity {
     private LocalDate joinedDate;
     private boolean isActive;
     private String gender;
+    private Long points;
+    private Long numberOfRewardsGiven;
 }

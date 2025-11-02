@@ -30,4 +30,16 @@ public class UserService {
     public List<UserResponseDto> getAllUsers() {
         return userServiceHelper.getAllActiveUsers();
     }
+
+    public Long getUserCount() {
+        return userServiceHelper.getUserCount();
+    }
+
+    public void updateUser(UserRequestDto userRequestDto) throws CrowdDataSourceException {
+        userServiceHelper.updateUser(userRequestDto);
+    }
+
+    public void toggleActivateUser(String userId) throws CrowdDataSourceException {
+        userServiceHelper.toggleActivateUser(userId);
+    }
 }

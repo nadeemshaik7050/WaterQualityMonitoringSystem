@@ -18,5 +18,7 @@ public interface UserMapper {
     User toEntity(UserRequestDto userRequestDto);
 
     @Mapping(target = "userName", source = "userName")
+    @Mapping(target = "points", source = "points")
+    @Mapping(target = "numberOfRewardsGiven", source = "numberOfRewardsGiven")
     UserResponseDto toDto(User user);
 }

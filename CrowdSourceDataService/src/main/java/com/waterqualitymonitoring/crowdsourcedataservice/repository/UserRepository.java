@@ -10,4 +10,7 @@ import java.util.List;
 public interface UserRepository extends CrudRepository<User, String> {
     List<User> findByIsActiveTrue();
     User findByUserIdAndIsActiveTrue(String userId);
+    User findByUserNameAndIsActiveTrue(String userName);
+    User findByUserId(String userId);
+    Long countByIsActiveTrue();
 }
