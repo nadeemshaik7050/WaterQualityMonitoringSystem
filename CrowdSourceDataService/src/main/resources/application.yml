@@ -1,12 +1,23 @@
 spring:
   application:
-    name: crowdData-service
+    name: crowd-data-service
   data:
     mongodb:
       uri: mongodb+srv://nadeemshaik0513_db_user:qEevah6NuwFhKUzi@java.xc442yz.mongodb.net/?appName=Java
       database: Java
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/WaterQualityMonitoring
 server:
   port: 8086
+
+keycloak:
+  server-url: http://localhost:8080
+  realm: WaterQualityMonitoring
+  client-id: main-service
+  client-secret: 47uEs7i2kgUtVH4ZbMYBoR13jWW4HVJ6
 
 reward:
   service-base-url: http://localhost:8084

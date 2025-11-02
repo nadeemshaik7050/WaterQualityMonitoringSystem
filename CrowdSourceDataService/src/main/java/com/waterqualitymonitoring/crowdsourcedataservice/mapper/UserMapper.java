@@ -2,6 +2,7 @@ package com.waterqualitymonitoring.crowdsourcedataservice.mapper;
 
 import com.waterqualitymonitoring.crowdsourcedataservice.entity.User;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.UserRequestDto;
+import com.waterqualitymonitoring.crowdsourcedataservice.model.UserResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -15,4 +16,7 @@ public interface UserMapper {
 
     @Mapping(target = "isActive", constant = "true")
     User toEntity(UserRequestDto userRequestDto);
+
+    @Mapping(target = "userName", source = "userName")
+    UserResponseDto toDto(User user);
 }

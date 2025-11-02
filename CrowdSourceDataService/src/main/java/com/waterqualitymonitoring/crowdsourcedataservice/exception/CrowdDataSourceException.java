@@ -26,4 +26,11 @@ public class CrowdDataSourceException extends Exception{
         this.fieldErrors = fieldErrors;
     }
 
+    public CrowdDataSourceException(CrowdDataSourceError crowdDataSourceError) {
+        super(crowdDataSourceError.getErrorMessage());
+        this.errorMessage = crowdDataSourceError.getErrorMessage();
+        this.errorCode = crowdDataSourceError.getErrorCode();
+        this.fieldErrors = null;
+    }
+
 }
