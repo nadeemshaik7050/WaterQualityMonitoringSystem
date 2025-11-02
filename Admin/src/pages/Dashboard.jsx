@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Users, Award, Activity, TrendingUp } from 'lucide-react';
+import { useAuth } from '../lib/keycloak/AuthProvider';
+import RewardsBarChart from '../components/global/RewardsBarChart';
 
 export default function Dashboard() {
+  
+
   const stats = [
     {
       title: 'Total Users',
@@ -32,6 +36,7 @@ export default function Dashboard() {
     //   link: '/users'
     // },
   ];
+
 
   return (
     <div>
@@ -89,38 +94,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3 pb-3 border-b">
-              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-              <div>
-                <p className="text-sm font-medium">New user registered</p>
-                <p className="text-xs text-gray-500">2 hours ago</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 pb-3 border-b">
-              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-              <div>
-                <p className="text-sm font-medium">Reward redeemed</p>
-                <p className="text-xs text-gray-500">5 hours ago</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 pb-3 border-b">
-              <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
-              <div>
-                <p className="text-sm font-medium">Water quality test submitted</p>
-                <p className="text-xs text-gray-500">1 day ago</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-              <div>
-                <p className="text-sm font-medium">User points updated</p>
-                <p className="text-xs text-gray-500">2 days ago</p>
-              </div>
-            </div>
-          </div>
+        {/* <div className="bg-white rounded-lg shadow p-6"> */}
+      
+          <RewardsBarChart/>
+{/*          
         </div> */}
       </div>
     </div>

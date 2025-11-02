@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from '@/lib/keycloak/AuthProvider';
-import Layout from '@/components/layout/Layout';
+import Layout from './components/layout/Layout';
 import { CreateUser } from './pages/users/CreateUser';
 import Dashboard from './pages/Dashboard';
 import { UsersList } from './pages/users/UsersList';
@@ -11,6 +10,8 @@ import RewardsList from './pages/rewards/RewardsList';
 import CreateReward from './pages/rewards/CreateReward';
 import EditReward from './pages/rewards/EditReward';
 import ViewReward from './pages/rewards/ViewReward';
+import { AuthProvider } from './lib/keycloak/AuthProvider';
+import CustomToaster from './components/global/CustomToast';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +26,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      {/* <AuthProvider> */}
+      <AuthProvider>
         <Router>
           <Layout>
             <Routes>
@@ -42,13 +43,16 @@ function App() {
               <Route path="/rewards/create" element={<CreateReward />} />
               <Route path="/rewards/edit/:id" element={<EditReward />} />
               <Route path="/rewards/:id" element={<ViewReward />} />
+              {/* <Route path="/logout" element={<Logout />} /> */}
+
               
               {/* Catch all */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            <CustomToaster/>
           </Layout>
         </Router>
-      {/* </AuthProvider> */}
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

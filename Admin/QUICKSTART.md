@@ -120,7 +120,7 @@ src/
 
 ### 🎨 Key Features Implemented
 
-✅ **User Management**
+   **User Management**
 - Create user with validation
 - View user list with search and pagination
 - View detailed user information
@@ -128,7 +128,7 @@ src/
 - Delete user with confirmation
 - Activate/Deactivate user status
 
-✅ **Reward Management**
+   **Reward Management**
 - Create reward with level selection
 - View reward list with search and pagination
 - View detailed reward information
@@ -136,16 +136,16 @@ src/
 - Delete reward with confirmation
 - Activate/Deactivate reward status
 
-✅ **UI/UX**
+   **UI/UX**
 - Responsive design (mobile, tablet, desktop)
 - Loading states
 - Empty states
 - Error handling
 - Confirmation dialogs
-- Success/error alerts
+- Success/error toasts
 - Smooth transitions
 
-✅ **Technical**
+   **Technical**
 - React Router for navigation
 - React Query for data fetching and caching
 - Axios with interceptors

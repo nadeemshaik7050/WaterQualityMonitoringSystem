@@ -2,7 +2,7 @@ import axios from 'axios';
 import KeycloakService from '../lib/keycloak/service';
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8084',
   headers: {
     'Accept': 'application/json',
   },
@@ -16,7 +16,7 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    if (['post', 'put', 'patch'].includes(config.method?.toLowerCase() || '')) {
+    if (!(config.data instanceof FormData)) {
       config.headers['Content-Type'] = 'application/json';
     }
 
@@ -24,6 +24,22 @@ axiosInstance.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+// axiosInstance.interceptors.request.use(
+//   (config) => {
+//     const token = KeycloakService.getToken();
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+
+//     if (['post', 'put', 'patch'].includes(config.method?.toLowerCase() || '')) {
+//       config.headers['Content-Type'] = 'application/json';
+//     }
+
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
 
 // Response Interceptor
 axiosInstance.interceptors.response.use(

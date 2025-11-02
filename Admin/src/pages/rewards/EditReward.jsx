@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Upload, X, ImageIcon } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { rewardApi } from '@/api/rewards';
+import toast from 'react-hot-toast';
 
 export default function EditReward() {
   const { id } = useParams();
@@ -41,11 +42,11 @@ export default function EditReward() {
   const updateMutation = useMutation({
     mutationFn: (data) => rewardApi.update(id, data),
     onSuccess: () => {
-      alert('Reward updated successfully!');
+      toast.success('Reward updated successfully!');
       navigate(`/rewards/${id}`);
     },
     onError: (error) => {
-      alert('Failed to update reward');
+      toast.error('Failed to update reward');
       console.error(error);
     },
   });
@@ -89,13 +90,13 @@ export default function EditReward() {
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Please select a valid image file');
+        toast.error('Please select a valid image file');
         return;
       }
       
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
+        toast.error('Image size should be less than 5MB');
         return;
       }
       

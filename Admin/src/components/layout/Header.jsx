@@ -3,7 +3,10 @@ import KeycloakService from '@/lib/keycloak/service';
 
 export const Header = () => {
   const handleLogout = () => {
-    KeycloakService.doLogout();
+    // console.log("CLICKED LOGOUT.............")
+    KeycloakService.doLogout({
+       redirectUri: "http://localhost:3000/logout",
+    });
   };
 
   const username = KeycloakService.getUsername() || 'Admin';
@@ -16,7 +19,7 @@ export const Header = () => {
             <span className="text-white font-bold text-xl">💧</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold text-gray-800">Practice Portal</span>
+            <span className="text-lg font-bold text-gray-800">Water Quality Monitoring Portal</span>
             <span className="text-xs text-gray-500">Admin Dashboard</span>
           </div>
         </Link>

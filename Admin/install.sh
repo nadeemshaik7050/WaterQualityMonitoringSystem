@@ -10,7 +10,7 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
-echo "✅ Node.js version: $(node -v)"
+echo "   Node.js version: $(node -v)"
 echo ""
 
 # Install dependencies
@@ -28,11 +28,11 @@ if [ ! -f .env ]; then
     cp .env.example .env
     echo "⚠️  Please update .env with your Keycloak configuration"
 else
-    echo "✅ .env file already exists"
+    echo "   .env file already exists"
 fi
 
 echo ""
-echo "✅ Installation complete!"
+echo "   Installation complete!"
 echo ""
 echo "🚀 To start the development server, run:"
 echo "   npm run dev"

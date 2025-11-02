@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { initKeycloak } from './service';
+import KeycloakService, { initKeycloak } from './service';
 
 const AuthContext = createContext(null);
 
@@ -22,6 +22,11 @@ export const AuthProvider = ({ children }) => {
     );
   }
 
+    if (!authenticated) {
+    KeycloakService.doLogin(); // 👈 redirect to Keycloak login if not logged in
+    return null;
+  }
+
   return (
     <AuthContext.Provider value={{ authenticated }}>
       {children}
@@ -29,8 +34,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-//eslin
-// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

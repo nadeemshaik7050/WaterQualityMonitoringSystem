@@ -16,14 +16,15 @@ const getKeycloak = () => {
 };
 
 export const initKeycloak = async (onAuthenticated) => {
-  const kc = getKeycloak();
-
-  if (isInitialized) {
-    const authenticated = kc.authenticated || false;
+  // 🚫 Prevent reinitialization
+  if (isInitialized && keycloakInstance) {
+    console.log('Keycloak already initialized');
+    const authenticated = keycloakInstance.authenticated || false;
     onAuthenticated(authenticated);
     return authenticated;
   }
 
+  const kc = getKeycloak();
   const initOptions = {
     onLoad: 'check-sso',
     pkceMethod: 'S256',
@@ -35,6 +36,7 @@ export const initKeycloak = async (onAuthenticated) => {
     isInitialized = true;
 
     if (authenticated) {
+      // Refresh token every 60s
       setInterval(() => {
         kc.updateToken(30).catch(() => {
           console.warn('Token refresh failed');

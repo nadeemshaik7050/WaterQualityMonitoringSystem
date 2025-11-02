@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Eye, Edit, Trash2, Power } from 'lucide-react';
 import { userApi } from '@/api/users';
 import { useDebounce } from '@/hooks/useDebounce';
+import toast from 'react-hot-toast';
 
 export const UsersList = () => {
   const [pageNumber, setPageNumber] = useState(0);
@@ -30,7 +31,7 @@ export const UsersList = () => {
       // Refetch data
       window.location.reload();
     } catch (error) {
-      alert('Failed to toggle status: ' + error);
+      toast.error('Failed to toggle status: ' + error);
     }
   };
 
@@ -41,7 +42,7 @@ export const UsersList = () => {
   //     await userApi.delete(id);
   //     window.location.reload();
   //   } catch (error) {
-  //     alert('Failed to delete user: ' + error);
+  //     toast('Failed to delete user: ' + error);
   //   }
   // };
 
