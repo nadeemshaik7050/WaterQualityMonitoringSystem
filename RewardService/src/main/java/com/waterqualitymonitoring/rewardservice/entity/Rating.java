@@ -14,4 +14,5 @@ public class Rating extends AbstractEntity{
     private String name;
     private Long points;
     private Binary image;
+    private boolean isActive;
 }

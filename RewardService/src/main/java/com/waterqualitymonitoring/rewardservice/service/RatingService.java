@@ -20,7 +20,7 @@ public class RatingService {
         ratingServiceHelper.addRating(ratingDto);
     }
 
-    public Rating getRatingbyId(String id) {
+    public Rating getRatingbyId(String id) throws RatingException {
         return ratingServiceHelper.getRatingById(id);
     }
 
@@ -31,5 +31,9 @@ public class RatingService {
     public void updateRating(RatingDto ratingDto) throws RatingException {
         ratingServiceHelper.validateAddRatingRequest(ratingDto);
         ratingServiceHelper.updateRating(ratingDto);
+    }
+
+    public void toggleActivateRating(String ratingId) throws RatingException {
+        ratingServiceHelper.toggleActivateRating(ratingId);
     }
 }

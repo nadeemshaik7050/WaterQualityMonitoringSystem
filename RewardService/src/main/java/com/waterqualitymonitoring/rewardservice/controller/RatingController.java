@@ -37,7 +37,7 @@ public class RatingController {
     }
 
     @GetMapping("/get/{id}")
-    public RewardServiceResponse<Rating> getRatings(@PathVariable("id") String id) {
+    public RewardServiceResponse<Rating> getRatings(@PathVariable("id") String id) throws RatingException {
         return RewardServiceResponse.success(ratingService.getRatingbyId(id));
     }
 
@@ -50,6 +50,11 @@ public class RatingController {
     public ResponseEntity<String> updateRating(@RequestBody RatingDto ratingDto) throws RatingException {
         ratingService.updateRating(ratingDto);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Rating updated successfully");
+    }
+
+    @GetMapping("/toggleRating")
+    public void toggleActivateRating(@RequestParam String ratingId) throws RatingException {
+        ratingService.toggleActivateRating(ratingId);
     }
 
 }

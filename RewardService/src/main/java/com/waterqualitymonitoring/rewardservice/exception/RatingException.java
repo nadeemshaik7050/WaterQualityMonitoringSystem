@@ -23,4 +23,11 @@ public class RatingException extends Exception{
         this.errorCode = error.getErrorCode();
         this.fieldErrors = fieldErrors;
     }
+
+    public RatingException(RewardServiceError error) {
+        super(error.getErrorMessage());
+        this.errorMessage = error.getErrorMessage();
+        this.errorCode = error.getErrorCode();
+        this.fieldErrors = null;
+    }
 }

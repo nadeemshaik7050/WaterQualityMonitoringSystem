@@ -10,4 +10,5 @@ public class RatingDto {
     private String name;
     private Long points;
     private Binary image;
+    private boolean isActive;
 }

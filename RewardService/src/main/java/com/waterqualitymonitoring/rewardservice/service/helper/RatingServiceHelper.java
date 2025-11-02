@@ -49,21 +49,34 @@ public class RatingServiceHelper {
                 .name(name)
                 .points(points)
                 .image(new Binary(image.getBytes()))
+                .isActive(true)
                 .build();
     }
 
-    public Rating getRatingById(String id) {
-        return ratingRepository.findById(id).orElse(null);
+    public Rating getRatingById(String id) throws RatingException {
+        Rating rating=ratingRepository.findByIdAndIsActiveTrue(id);
+        if(rating==null){
+            throw new RatingException(RewardServiceError.RATING_NOT_FOUND);
+        }
+        return rating;
     }
 
     public List<Rating> getAllRatings() {
-        List<Rating> ratings = new ArrayList<>();
-        ratingRepository.findAll().forEach(ratings::add);
-        return ratings;
+        return new ArrayList<>(ratingRepository.findByIsActiveTrue());
     }
 
     public void updateRating(RatingDto ratingDto) {
         Rating rating= RatingMapper.INSTANCE.toEntity(ratingDto);
         ratingRepository.save(rating);
+    }
+
+    public void toggleActivateRating(String ratingId) throws RatingException {
+        Rating rating = ratingRepository.findById(ratingId).orElse(null);
+        if (rating != null) {
+            rating.setActive(!rating.isActive());
+            ratingRepository.save(rating);
+            return;
+        }
+        throw new RatingException(RewardServiceError.RATING_NOT_FOUND);
     }
 }
