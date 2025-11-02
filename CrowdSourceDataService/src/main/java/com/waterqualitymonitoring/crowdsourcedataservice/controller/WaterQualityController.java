@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/crowdsource/waterquality")
+@RequestMapping("/crowddata/waterquality")
 public class WaterQualityController {
 
     private final WaterQualityService waterQualityService;

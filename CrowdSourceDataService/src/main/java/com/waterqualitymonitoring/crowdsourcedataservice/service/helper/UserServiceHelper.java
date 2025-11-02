@@ -1,14 +1,21 @@
 package com.waterqualitymonitoring.crowdsourcedataservice.service.helper;
 
+import com.waterqualitymonitoring.crowdsourcedataservice.config.KeycloakProperties;
 import com.waterqualitymonitoring.crowdsourcedataservice.entity.User;
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceError;
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceException;
 import com.waterqualitymonitoring.crowdsourcedataservice.mapper.UserMapper;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.UserRequestDto;
+import com.waterqualitymonitoring.crowdsourcedataservice.model.UserResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.repository.UserRepository;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +24,13 @@ import java.util.List;
 public class UserServiceHelper {
 
     private final UserRepository userRepository;
+    private final Keycloak keycloak;
+    private final KeycloakProperties keycloakProperties;
     private final UserMapper userMapper= UserMapper.INSTANCE;
 
-    public UserServiceHelper(UserRepository userRepository) {
+    public UserServiceHelper(UserRepository userRepository,Keycloak keycloak,KeycloakProperties keycloakProperties) {
+        this.keycloak=keycloak;
+        this.keycloakProperties=keycloakProperties;
         this.userRepository = userRepository;
     }
     
@@ -41,10 +52,75 @@ public class UserServiceHelper {
         }
     }
 
-    public void createUser(UserRequestDto userRequestDto) {
+    public void createUser(UserRequestDto userRequestDto) throws CrowdDataSourceException {
         // Implementation for creating a user in the database
         log.info("Creating user with username: {}", userRequestDto.getUserName());
+        userRequestDto.setUserId(createUserinKeycloak(userRequestDto));
+        userRequestDto.setJoinedDate(LocalDate.now());
         User user = userMapper.toEntity(userRequestDto);
         userRepository.save(user);
+    }
+
+    private String createUserinKeycloak(UserRequestDto userRequestDto) throws CrowdDataSourceException {
+        List<UserRepresentation> existingUsers = keycloak.realm(keycloakProperties.realm())
+                .users()
+                .search(userRequestDto.getUserName());
+        if (!existingUsers.isEmpty()) {
+            return existingUsers.get(0).getId();
+        }
+        UserRepresentation user = new UserRepresentation();
+        user.setUsername(userRequestDto.getUserName());
+        user.setEmail(userRequestDto.getEmail());
+        user.setFirstName(userRequestDto.getFirstName());
+        user.setLastName(userRequestDto.getLastName());
+        user.setEnabled(true);
+        Response response = keycloak.realm(keycloakProperties.realm())
+                .users()
+                .create(user);
+        if (response.getStatus()>=300) {
+            log.error("Failed to create user in Keycloak: {}", response.getStatusInfo());
+            throw new CrowdDataSourceException(CrowdDataSourceError.FAILED_TO_CREATE_USER_IN_KEYCLOAK);
+        }
+
+        String userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+        if(userRequestDto.getPassword()!=null) {
+            CredentialRepresentation credential = new CredentialRepresentation();
+            credential.setType(CredentialRepresentation.PASSWORD);
+            credential.setValue(userRequestDto.getPassword());
+            credential.setTemporary(false);
+            keycloak.realm(keycloakProperties.realm())
+                    .users()
+                    .get(userId)
+                    .resetPassword(credential);
+        }
+        if(userRequestDto.getRole()!=null) {
+            keycloak.realm(keycloakProperties.realm())
+                    .users()
+                    .get(userId)
+                    .roles()
+                    .realmLevel()
+                    .add(List.of(keycloak.realm(keycloakProperties.realm())
+                            .roles()
+                            .get(userRequestDto.getRole())
+                            .toRepresentation()));
+        }
+        return userId;
+    }
+
+    public UserResponseDto getUser(String userId) throws CrowdDataSourceException {
+        User user = userRepository.findByUserIdAndIsActiveTrue(userId);
+        if (user == null) {
+           throw new CrowdDataSourceException(CrowdDataSourceError.USER_NOT_FOUND);
+        }
+        return userMapper.toDto(user);
+    }
+
+    public List<UserResponseDto> getAllActiveUsers() {
+        List<User> users = userRepository.findByIsActiveTrue();
+        List<UserResponseDto> userResponseDtos = new ArrayList<>();
+        for (User user : users) {
+            userResponseDtos.add(userMapper.toDto(user));
+        }
+        return userResponseDtos;
     }
 }

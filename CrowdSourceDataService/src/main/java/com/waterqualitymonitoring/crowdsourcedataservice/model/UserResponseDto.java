@@ -1,19 +1,20 @@
 package com.waterqualitymonitoring.crowdsourcedataservice.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
-public class UserRequestDto {
+@Builder
+public class UserResponseDto {
+    private String userId;
+    private String userName;
+    private String email;
+    private String role;
     private String firstName;
     private String lastName;
-    private String email;
-    private String userName;
-    private String password;
-    private String role;
     private String gender;
     private String phoneNumber;
-    private String userId;
     private LocalDate joinedDate;
 }

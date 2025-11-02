@@ -5,21 +5,36 @@ import com.waterqualitymonitoring.crowdsourcedataservice.model.*;
 import com.waterqualitymonitoring.crowdsourcedataservice.service.UserService;
 import com.waterqualitymonitoring.crowdsourcedataservice.service.WaterQualityService;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/crowdsource/user")
+@RequestMapping("/crowddata/user")
 public class UserController {
     private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @PostMapping(value = "/create",consumes = MediaType.APPLICATION_JSON_VALUE)
     public void createUser (@RequestBody UserRequestDto userRequestDto) throws CrowdDataSourceException {
          userService.createUser(userRequestDto);
     }
+
+    @GetMapping("/get")
+    public CrowdDataResponse<UserResponseDto> getUser(@RequestParam String userId) throws CrowdDataSourceException {
+        return CrowdDataResponse.success(userService.getUser(userId));
+    }
+
+    @GetMapping("/allUsers")
+    @PreAuthorize("hasRole('wqm-admin')")
+    public CrowdDataResponse<List<UserResponseDto>> getAllUsers() throws CrowdDataSourceException {
+        return CrowdDataResponse.success(userService.getAllUsers());
+    }
+
+
+
 }
