@@ -8,6 +8,7 @@ import com.waterqualitymonitoring.crowdsourcedataservice.mapper.UserMapper;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.UserRequestDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.UserResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.repository.UserRepository;
+import com.waterqualitymonitoring.crowdsourcedataservice.utility.WQMUtility;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
@@ -55,11 +56,15 @@ public class UserServiceHelper {
     public void createUser(UserRequestDto userRequestDto) throws CrowdDataSourceException {
         // Implementation for creating a user in the database
         log.info("Creating user with username: {}", userRequestDto.getUserName());
-        userRequestDto.setUserId(createUserinKeycloak(userRequestDto));
+
+        userRequestDto.setCitizenId(createUserinKeycloak(userRequestDto));
         userRequestDto.setJoinedDate(LocalDate.now());
+        userRequestDto.setPassword(WQMUtility.encryptPassword(userRequestDto.getPassword()));
+
         User user = userMapper.toEntity(userRequestDto);
         user.setPoints(0L);
         user.setNumberOfRewardsGiven(0L);
+
         userRepository.save(user);
     }
 
@@ -109,8 +114,8 @@ public class UserServiceHelper {
         return userId;
     }
 
-    public UserResponseDto getUser(String userId) throws CrowdDataSourceException {
-        User user = userRepository.findByUserIdAndIsActiveTrue(userId);
+    public UserResponseDto getUser(String citizenId) throws CrowdDataSourceException {
+        User user = userRepository.findByCitizenIdAndIsActiveTrue(citizenId);
         if (user == null) {
            throw new CrowdDataSourceException(CrowdDataSourceError.USER_NOT_FOUND);
         }
@@ -142,8 +147,8 @@ public class UserServiceHelper {
         throw new CrowdDataSourceException(CrowdDataSourceError.USER_NOT_FOUND);
     }
 
-    public void toggleActivateUser(String userId) throws CrowdDataSourceException {
-        User user = userRepository.findByUserId(userId);
+    public void toggleActivateUser(String citizenId) throws CrowdDataSourceException {
+        User user = userRepository.findByCitizenId(citizenId);
         if (user != null) {
             user.setActive(!user.isActive());
             userRepository.save(user);

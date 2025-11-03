@@ -29,9 +29,10 @@ public class RatingController {
 
     @PostMapping(value = "/add",consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<String> addRating( @RequestParam("name") String name,
-                                             @RequestParam("points") Long points,
+                                             @RequestParam("minPoints") Long minPoints,
+                                             @RequestPart("maxPoints") Long maxPoints,
                                              @RequestPart("image") MultipartFile image) throws IOException, RatingException {
-        RatingDto ratingDto=ratingServiceHelper.createRatingDto(name, points, image);
+        RatingDto ratingDto=ratingServiceHelper.createRatingDto(name, minPoints,maxPoints, image);
         ratingService.addRating(ratingDto);
         return ResponseEntity.status(HttpStatus.CREATED).body("Rating added successfully");
     }
@@ -47,7 +48,11 @@ public class RatingController {
     }
 
     @PostMapping(value = "/update", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<String> updateRating(@RequestBody RatingDto ratingDto) throws RatingException {
+    public ResponseEntity<String> updateRating( @RequestParam("name") String name,
+                                                @RequestParam("minPoints") Long minPoints,
+                                                @RequestPart("maxPoints") Long maxPoints,
+                                                @RequestPart("image") MultipartFile image) throws RatingException, IOException {
+        RatingDto ratingDto=ratingServiceHelper.createRatingDto(name, minPoints,maxPoints, image);
         ratingService.updateRating(ratingDto);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Rating updated successfully");
     }

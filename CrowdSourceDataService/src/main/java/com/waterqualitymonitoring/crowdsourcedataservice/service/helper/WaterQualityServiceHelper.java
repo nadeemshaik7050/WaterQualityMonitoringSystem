@@ -5,11 +5,14 @@ import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSour
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceException;
 import com.waterqualitymonitoring.crowdsourcedataservice.feignclient.RewardsFeignClient;
 import com.waterqualitymonitoring.crowdsourcedataservice.mapper.WaterQualitySubmitMapper;
+import com.waterqualitymonitoring.crowdsourcedataservice.model.RewardRequestDto;
+import com.waterqualitymonitoring.crowdsourcedataservice.model.RewardResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataRequestDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.repository.WaterQualitySubmitLogRepository;
-import com.waterqualitymonitoring.crowdsourcedataservice.utility.SubmissionIdUtility;
+import com.waterqualitymonitoring.crowdsourcedataservice.utility.WQMUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -47,20 +50,36 @@ public class WaterQualityServiceHelper {
         }
     }
 
-    public WaterQualityDataResponseDto doSubmission(WaterQualityDataRequestDto waterQualityDataRequestDto) {
+    public WaterQualityDataResponseDto doSubmission(WaterQualityDataRequestDto waterQualityDataRequestDto) throws CrowdDataSourceException {
         WaterQualitySubmitLog waterQualitySubmitLog= WaterQualitySubmitMapper.INSTANCE.toSubmitLog(waterQualityDataRequestDto);
-        String setSubmissionId= SubmissionIdUtility.generateSubmissionID();
-        waterQualitySubmitLog.setSubmissionId(setSubmissionId);
-        String rewardResponse=callExternalService();
+        String submissionId= WQMUtility.generateSubmissionID();
+        waterQualitySubmitLog.setSubmissionId(submissionId);
+        RewardRequestDto rewardRequestDto=createRewardRequestDto(waterQualityDataRequestDto,submissionId);
+        ResponseEntity<RewardResponseDto> rewardResponse=callRewardService(rewardRequestDto);
+        if (!rewardResponse.getStatusCode().is2xxSuccessful()){
+            log.error("reward service call failed for submissionId: {}",submissionId);
+            throw new CrowdDataSourceException(CrowdDataSourceError.REWARD_SERVICE_ERROR);
+        }
         waterQualitySubmitLogRepository.save(waterQualitySubmitLog);
         return WaterQualityDataResponseDto.builder()
-                .submissionId(setSubmissionId)
-                .message(rewardResponse)
+                .submissionId(submissionId)
                 .receiptNumber("ABCDE")
                 .build();
     }
 
-    public String callExternalService(){
-        return rewardsFeignClient.callRewardService();
+    private RewardRequestDto createRewardRequestDto(WaterQualityDataRequestDto waterQualityDataRequestDto, String submissionId) {
+        return RewardRequestDto.builder()
+                .citizenId(waterQualityDataRequestDto.getCitizenId())
+                .userName(waterQualityDataRequestDto.getUserName())
+                .postalCode(waterQualityDataRequestDto.getPostalCode())
+                .unit(waterQualityDataRequestDto.getUnit())
+                .value(waterQualityDataRequestDto.getValue())
+                .observations(waterQualityDataRequestDto.getObservations())
+                .binaries(waterQualityDataRequestDto.getBinaries())
+                .build();
+    }
+
+    public ResponseEntity<RewardResponseDto> callRewardService(RewardRequestDto rewardRequestDto) throws CrowdDataSourceException {
+        return rewardsFeignClient.callRewardService(rewardRequestDto);
     }
 }

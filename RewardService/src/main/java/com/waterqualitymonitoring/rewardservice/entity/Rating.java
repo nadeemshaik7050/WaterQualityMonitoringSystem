@@ -12,7 +12,8 @@ import org.bson.types.Binary;
 @NoArgsConstructor
 public class Rating extends AbstractEntity{
     private String name;
-    private Long points;
+    private Long minPoints;
+    private Long maxPoints;
     private Binary image;
     private boolean isActive;
 }

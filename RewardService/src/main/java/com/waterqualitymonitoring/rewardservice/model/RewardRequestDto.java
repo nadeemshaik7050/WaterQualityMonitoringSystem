@@ -1,4 +1,4 @@
-package com.waterqualitymonitoring.crowdsourcedataservice.model;
+package com.waterqualitymonitoring.rewardservice.model;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,12 +8,12 @@ import java.util.List;
 
 @Data
 @Builder
-public class WaterQualityDataRequestDto {
+public class RewardRequestDto {
+    private String citizenId;
+    private String userName;
     private String postalCode;
     private String unit;
     private Double value;
     private Observations observations;
     private List<Binary> binaries;
-    private String citizenId;
-    private String userName;
 }

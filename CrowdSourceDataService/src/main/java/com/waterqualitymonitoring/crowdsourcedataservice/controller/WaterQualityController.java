@@ -21,7 +21,7 @@ public class WaterQualityController {
         this.waterQualityService = waterQualityService;
     }
 
-    @PostMapping(value = "/submit",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/submit",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CrowdDataResponse<WaterQualityDataResponseDto> submitWaterQualityData (@RequestBody WaterQualityDataRequestDto waterQualityDataRequestDto) throws CrowdDataSourceException {
         return CrowdDataResponse.success(waterQualityService.doSubmission(waterQualityDataRequestDto));
     }

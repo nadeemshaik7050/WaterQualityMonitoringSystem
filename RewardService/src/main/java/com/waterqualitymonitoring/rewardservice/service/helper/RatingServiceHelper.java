@@ -26,7 +26,7 @@ public class RatingServiceHelper {
         if(ratingDto.getName() == null || ratingDto.getName().isEmpty()) {
             missingFields.add("name");
         }
-        if(ratingDto.getPoints()==null){
+        if(ratingDto.getMinPoints()==null || ratingDto.getMaxPoints()==null){
             missingFields.add("points");
         }
         if(ratingDto.getImage()==null){
@@ -44,10 +44,11 @@ public class RatingServiceHelper {
         ratingRepository.save(rating);
     }
 
-    public RatingDto createRatingDto(String name, Long points, MultipartFile image) throws IOException {
+    public RatingDto createRatingDto(String name, Long minPoints,Long maxPoints, MultipartFile image) throws IOException {
         return RatingDto.builder()
                 .name(name)
-                .points(points)
+                .minPoints(minPoints)
+                .maxPoints(maxPoints)
                 .image(new Binary(image.getBytes()))
                 .isActive(true)
                 .build();

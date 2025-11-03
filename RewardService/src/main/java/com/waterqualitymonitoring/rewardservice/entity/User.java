@@ -1,8 +1,7 @@
-package com.waterqualitymonitoring.crowdsourcedataservice.entity;
+package com.waterqualitymonitoring.rewardservice.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;

@@ -14,6 +14,6 @@ public class UserRequestDto {
     private String role;
     private String gender;
     private String phoneNumber;
-    private String userId;
+    private String citizenId;
     private LocalDate joinedDate;
 }

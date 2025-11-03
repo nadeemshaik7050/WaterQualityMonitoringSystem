@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class WaterQualitySubmitLog extends AbstractEntity implements Serializable {
     private WaterQualityData waterQualityData;
     private String userName;
-    private String userEmail;
+    private String citizenId;
     private Long rewardsPointGiven;
     private Long totalRewardsPoint;
     private String status;

@@ -10,4 +10,5 @@ import java.util.List;
 public interface RatingRepository extends CrudRepository<Rating,String> {
     List<Rating> findByIsActiveTrue();
     Rating findByIdAndIsActiveTrue(String id);
+    Rating findFirstByMinPointsLessThanEqualAndMaxPointsGreaterThanEqualAndIsActiveTrue(Long points);
 }
