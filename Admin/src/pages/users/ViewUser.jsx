@@ -120,6 +120,11 @@ export const ViewUser = () => {
       <label className="block text-sm font-medium text-gray-500 mb-1">Rewards Given</label>
       <p className="text-lg">{user.numberOfRewardsGiven}</p>
     </div>
+
+     <div>
+      <label className="block text-sm font-medium text-gray-500 mb-1">Citizen Id</label>
+      <p className="text-lg">{id}</p>
+    </div>
   </div>
 </div>
 

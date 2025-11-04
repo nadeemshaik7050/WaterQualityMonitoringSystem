@@ -167,7 +167,12 @@ toggleRewardStatus: async (ratingId) => {
     return { success: false, message: error.message };
   }
 },
-
+  // 🔹 Get total user count
+  getCountRewards: async () => {
+  const { data } = await axiosInstance.get("/crowddata/rewards/count");
+  // Extract only result value from object
+  return data.result ?? 0;
+},
 
 
 };

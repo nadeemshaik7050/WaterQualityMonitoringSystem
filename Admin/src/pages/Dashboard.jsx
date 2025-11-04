@@ -3,12 +3,18 @@ import { Users, Award, Activity, TrendingUp } from 'lucide-react';
 import RewardsBarChart from '../components/global/RewardsBarChart';
 import { useQuery } from '@tanstack/react-query';
 import { userApi } from '../api/users';
+import { rewardApi } from '../api/rewards';
 
 export default function Dashboard() {
 
 const { data: userCount, isLoading } = useQuery({
   queryKey: ["userCount"],
   queryFn: userApi.getCount,
+});
+
+const { data: rewardCount } = useQuery({
+  queryKey: ["rewardCount"],
+  queryFn: rewardApi.getCountRewards,
 });
 
 const stats = [
@@ -21,7 +27,7 @@ const stats = [
     },
     {
       title: "Total Rewards",
-      value: "45", // replace this later with API if needed
+      value: rewardCount ?? 0,
       icon: Award,
       color: "bg-green-500",
       link: "/rewards",

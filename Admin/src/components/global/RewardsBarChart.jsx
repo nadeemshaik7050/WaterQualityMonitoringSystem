@@ -26,7 +26,7 @@ const RewardsBarChart = () => {
           // Transform for recharts
           const formatted = res.result.slice(0,5).map((item) => ({
             name: item.rewardName,
-            points: item.pointsRequired,
+            points: item.maxPoints,
           }));
           setData(formatted);
           setIsLoading(false);
