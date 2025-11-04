@@ -1,7 +1,7 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Edit } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { userApi } from '@/api/users';
+import { userApi } from '../../api/users';
 import { toast } from 'sonner';
 
 export const ViewUser = () => {
@@ -74,83 +74,55 @@ export const ViewUser = () => {
         </Link>
       </div>
 
-      <div className="bg-gradient-card rounded-lg shadow-soft p-6 max-w-2xl">
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-1">Username</label>
-            <p className="text-lg">{user.username}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-1">Email</label>
-            <p className="text-lg">{user.email}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-1">Citizen ID</label>
-            <p className="text-lg">{user.citizenId}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-1">Gender</label>
-            <p className="text-lg">{user.gender}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-1">Age</label>
-            <p className="text-lg">{user.age}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-1">Points</label>
-            <p className="text-lg font-semibold text-blue-600">{user.points}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-1">Total Reviews</label>
-            <p className="text-lg">{user.totalReviews}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-1">Joined Date</label>
-            <p className="text-lg">{user.joinedDate}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-1">Status</label>
-            <span className={`inline-block px-3 py-1 rounded-full text-sm ${
-              user.activeStatus 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-red-100 text-red-800'
-            }`}>
-              {user.activeStatus ? 'Active' : 'Inactive'}
-            </span>
-          </div>
-        </div>
+    <div className="bg-gradient-card rounded-lg shadow-soft p-6 max-w-2xl">
+  <div className="grid grid-cols-2 gap-6">
+    <div>
+      <label className="block text-sm font-medium text-gray-500 mb-1">Username</label>
+      <p className="text-lg">{user.userName}</p>
+    </div>
 
-        <div className="pt-6 border-t flex space-x-4">
-          <Link
-            to={`/users/${id}/edit`}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            Edit User
-          </Link>
-          <button
-            onClick={() => toggleStatusMutation.mutate(id)}
-            disabled={toggleStatusMutation.isPending}
-            className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition disabled:opacity-50"
-          >
-            {user.activeStatus ? 'Deactivate' : 'Activate'}
-          </button>
-          <button
-            onClick={handleDelete}
-            disabled={deleteMutation.isPending}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50"
-          >
-            Delete User
-          </button>
-        </div>
-      </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-500 mb-1">Email</label>
+      <p className="text-lg">{user.email}</p>
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium text-gray-500 mb-1">First Name</label>
+      <p className="text-lg">{user.firstName}</p>
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium text-gray-500 mb-1">Last Name</label>
+      <p className="text-lg">{user.lastName}</p>
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium text-gray-500 mb-1">Gender</label>
+      <p className="text-lg capitalize">{user.gender?.toLowerCase()}</p>
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium text-gray-500 mb-1">Role</label>
+      <p className="text-lg">{user.role}</p>
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium text-gray-500 mb-1">Joined Date</label>
+      <p className="text-lg">{user.joinedDate}</p>
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium text-gray-500 mb-1">Points</label>
+      <p className="text-lg font-semibold text-blue-600">{user.points}</p>
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium text-gray-500 mb-1">Rewards Given</label>
+      <p className="text-lg">{user.numberOfRewardsGiven}</p>
+    </div>
+  </div>
+</div>
+
     </div>
   );
 };

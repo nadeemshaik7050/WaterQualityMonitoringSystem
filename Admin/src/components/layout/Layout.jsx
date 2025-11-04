@@ -80,6 +80,7 @@ const Layout = ({ children }) => {
       {/* MAIN CONTENT */}
       <main className="flex-1 md:ml-64 mt-16 p-6 transition-all duration-300">
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 min-h-[calc(100vh-10rem)]">
+          <Header/>
           {children}
         </div>
       </main>

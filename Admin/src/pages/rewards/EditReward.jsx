@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Upload, X, ImageIcon } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { rewardApi } from '@/api/rewards';
 import toast from 'react-hot-toast';
+import { rewardApi } from '../../api/rewards';
 
 export default function EditReward() {
   const { id } = useParams();
@@ -12,7 +12,8 @@ export default function EditReward() {
     rewardName: '',
     rank: '',
     level: 'Bronze',
-    pointsRequired: '',
+    minPoints: '',
+    maxPoints:'',
     description: '',
   });
   const [imageFile, setImageFile] = useState(null);
@@ -29,7 +30,8 @@ export default function EditReward() {
         rewardName: reward.rewardName,
         rank: reward.rank,
         level: reward.level,
-        pointsRequired: reward.pointsRequired,
+        minPoints: reward.minPoints,
+        maxPoints: reward.maxPoints,
         description: reward.description || '',
       });
       // Set existing image as preview
@@ -39,46 +41,32 @@ export default function EditReward() {
     }
   }, [reward]);
 
-  const updateMutation = useMutation({
-    mutationFn: (data) => rewardApi.update(id, data),
-    onSuccess: () => {
-      toast.success('Reward updated successfully!');
-      navigate(`/rewards/${id}`);
-    },
-    onError: (error) => {
-      toast.error('Failed to update reward');
-      console.error(error);
-    },
-  });
+const updateMutation = useMutation({
+  mutationFn: (data) => rewardApi.updateReward(data),
+  onSuccess: () => {
+    toast.success("Reward updated successfully!");
+    navigate(`/rewards/${id}`);
+  },
+  onError: (error) => {
+    toast.error("Failed to update reward");
+    console.error(error);
+  },
+});
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Create FormData to send data including image in binary format
-    const formDataToSend = new FormData();
-    formDataToSend.append('rewardName', formData.rewardName);
-    formDataToSend.append('rank', formData.rank);
-    formDataToSend.append('level', formData.level);
-    formDataToSend.append('pointsRequired', formData.pointsRequired);
-    formDataToSend.append('description', formData.description);
-    
-    // Append image file if selected
-    if (imageFile) {
-      formDataToSend.append('image', imageFile);
-    }
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    // Console log the payload
-    console.log('Payload being sent to backend:');
-    for (let [key, value] of formDataToSend.entries()) {
-      if (value instanceof File) {
-        console.log(`${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
-      } else {
-        console.log(`${key}: ${value}`);
-      }
-    }
-    
-    updateMutation.mutate(formDataToSend);
+  const payload = {
+    name: formData.rewardName,
+    minPoints: formData.minPoints,
+    maxPoints: formData.maxPoints,
+    image:formData
   };
+
+  updateMutation.mutate(payload);
+};
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,15 +81,15 @@ export default function EditReward() {
         toast.error('Please select a valid image file');
         return;
       }
-      
+
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast.error('Image size should be less than 5MB');
         return;
       }
-      
+
       setImageFile(file);
-      
+
       // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -148,8 +136,8 @@ export default function EditReward() {
               <div className="w-[300px] h-[200px] items-center bg-secondary-100 rounded-lg flex justify-center overflow-hidden border-2 border-dashed border-secondary-300">
                 {imagePreview ? (
                   <div className="relative w-full h-full">
-                    <img 
-                      src={imagePreview} 
+                    <img
+                      src={imagePreview}
                       alt="Preview"
                       className="w-full h-full object-cover"
                     />
@@ -168,7 +156,7 @@ export default function EditReward() {
                   </div>
                 )}
               </div>
-              
+
               {/* File Input */}
               <div className="flex items-center gap-2">
                 <label className="flex-1 cursor-pointer">
@@ -208,12 +196,12 @@ export default function EditReward() {
 
           <div>
             <label className="block text-sm font-medium text-secondary-700 mb-1">
-              Rank *
+              Minimum Points *
             </label>
             <input
               type="number"
-              name="rank"
-              value={formData.rank}
+              name="minPoints"
+              value={formData.minPoints}
               onChange={handleChange}
               required
               min="1"
@@ -221,32 +209,15 @@ export default function EditReward() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-1">
-              Level *
-            </label>
-            <select
-              name="level"
-              value={formData.level}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="Bronze">Bronze</option>
-              <option value="Silver">Silver</option>
-              <option value="Gold">Gold</option>
-              <option value="Platinum">Platinum</option>
-            </select>
-          </div>
 
           <div>
             <label className="block text-sm font-medium text-secondary-700 mb-1">
-              Points Required *
+              Minimum Points *
             </label>
             <input
               type="number"
-              name="pointsRequired"
-              value={formData.pointsRequired}
+              name="maxPoints"
+              value={formData.maxPoints}
               onChange={handleChange}
               required
               min="1"
@@ -254,18 +225,6 @@ export default function EditReward() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-1">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows="4"
-              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            />
-          </div>
 
           <div className="flex gap-4 pt-4">
             <button

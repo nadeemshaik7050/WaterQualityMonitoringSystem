@@ -68,7 +68,9 @@ const onSubmit = (data) => {
 
   const formData = new FormData();
   formData.append("name", data.name);
-  formData.append("points", data.points);
+  formData.append("minPoints", data.minPoints);
+    formData.append("maxPoints", data.maxPoints);
+  // formData.append("points", data.points);
   formData.append("image", imageFile);
 
   createMutation.mutate(formData);
@@ -142,19 +144,37 @@ const onSubmit = (data) => {
             )}
           </div>
 
-          {/*  Points */}
-          <div>
-            <label className="block text-sm font-medium">Points Required*</label>
+
+            <div>
+            <label className="block text-sm font-medium">Min Points*</label>
             <input
               type="number"
-              {...register("points")}
+              placeholder="enter min points"
+              {...register("minPoints")}
               className="input-text"
-              min="1"
+    
             />
             {errors.points && (
-              <p className="text-red-500 text-xs">{errors.points.message}</p>
+              <p className="text-red-500 text-xs">{errors.minPoints.message}</p>
             )}
           </div>
+
+           <div>
+            <label className="block text-sm font-medium">Min Points*</label>
+            <input
+              type="number"
+              placeholder="enter max points"
+              {...register("maxPoints")}
+              className="input-text"
+      
+            />
+            {errors.points && (
+              <p className="text-red-500 text-xs">{errors.maxPoints.message}</p>
+            )}
+          </div>
+
+
+
           {/*  Submit Buttons */}
           <div className="flex gap-4 pt-4">
             <button

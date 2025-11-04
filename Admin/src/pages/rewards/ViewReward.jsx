@@ -66,20 +66,21 @@ export default function ViewReward() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-secondary-500">Points Required</label>
-        <p className="mt-1 text-lg">{reward?.points || "NA"}</p>
+        <label className="block text-sm font-medium text-secondary-500">Minimum Points</label>
+        <p className="mt-1 text-lg">{reward?.minPoints || "NA"}</p>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-secondary-500">Description</label>
-        <p className="mt-1 text-lg">{reward?.description || "N/A"}</p>
+        <div>
+        <label className="block text-sm font-medium text-secondary-500">Maximum Points</label>
+        <p className="mt-1 text-lg">{reward?.maxPoints || "NA"}</p>
       </div>
+
 
       <div>
         <label className="block text-sm font-medium text-secondary-500">Status</label>
         <p className="mt-1">
-          <span className={`px-3 py-1 rounded text-sm ${reward?.activeStatus ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-            {reward?.activeStatus ? 'Active' : 'Inactive'}
+          <span className={`px-3 py-1 rounded text-sm ${reward?.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+            {reward?.active ? 'Active' : 'Inactive'}
           </span>
         </p>
       </div>
@@ -92,12 +93,12 @@ export default function ViewReward() {
 
     {/* Right: Reward Image */}
     <div className="w-full md:w-1/2 flex justify-center items-center">
-      <div className="w-[350px] h-[280px] bg-secondary-100 rounded-lg flex items-center justify-center overflow-hidden border border-secondary-200">
+      <div className="w-[300px] h-[300px] bg-secondary-100 rounded-lg flex items-center justify-center overflow-hidden border border-secondary-200">
         {reward?.image?.data ? (
           <img
             src={`data:image/png;base64,${reward.image.data}`}
             alt={reward.name}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-cover"
           />
         ) : (
           <div className="flex flex-col items-center justify-center text-secondary-400">

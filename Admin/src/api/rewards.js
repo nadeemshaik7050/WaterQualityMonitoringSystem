@@ -116,23 +116,27 @@ export const rewardApi = {
       throw error;
     }
   },
-  updateReward: async (formData)=>{
-    try{
-      const {data} = await axiosInstance.post("/rewards/rating/update",
-        formData,{
-          headers:{
-              "Content-Type": "multipart/form-data"
-          }
-        }
-      )
-      return data;
-    }
-    catch (error) {
-    console.error("Failed to create reward:", error);
+updateReward: async (payload) => {
+  try {
+    const { data } = await axiosInstance.post(
+      "rewards/rating/update",
+      payload, // plain object, not FormData
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    console.error("Failed to update reward:", error);
     throw error;
-    }
   }
-  ,
+},
+
+
+
+  
  createReward: async (formData) => {
   try {
     const { data } = await axiosInstance.post(
@@ -150,7 +154,19 @@ export const rewardApi = {
     throw error;
   }
 },
+toggleRewardStatus: async (ratingId) => {
+  try {
+    await axiosInstance.get("/rewards/rating/toggleRating", {
+      params: { ratingId },
+    });
 
+    console.log("  Reward status toggled successfully");
+    return { success: true };
+  } catch (error) {
+    console.error(`   Failed to toggle reward status (${ratingId}):`, error);
+    return { success: false, message: error.message };
+  }
+},
 
 
 

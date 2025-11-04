@@ -62,6 +62,8 @@ const KeycloakService = {
   isLoggedIn: () => !!getKeycloak().token,
   getUsername: () => getKeycloak().tokenParsed?.preferred_username,
   getUserRoles: () => getKeycloak().realmAccess?.roles || [],
+  getUserId: () => getKeycloak().tokenParsed?.sub || null,
+
 };
 
 export default KeycloakService;

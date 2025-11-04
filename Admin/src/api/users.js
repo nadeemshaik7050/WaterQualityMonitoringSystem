@@ -1,290 +1,125 @@
-// Mock user data
-const MOCK_USERS = [
-  {
-    userId: '1',
-    username: 'john_doe',
-    email: 'john@example.com',
-    activeStatus: true,
-    totalReviews: 45,
-    joinedDate: '2024-01-15',
-    citizenId: 'CIT001',
-    points: 1250,
-    gender: 'Male',
-    age: 32,
-  },
-  {
-    userId: '2',
-    username: 'jane_smith',
-    email: 'jane@example.com',
-    activeStatus: true,
-    totalReviews: 67,
-    joinedDate: '2024-02-20',
-    citizenId: 'CIT002',
-    points: 1890,
-    gender: 'Female',
-    age: 28,
-  },
-  {
-    userId: '3',
-    username: 'bob_wilson',
-    email: 'bob@example.com',
-    activeStatus: false,
-    totalReviews: 23,
-    joinedDate: '2024-03-10',
-    citizenId: 'CIT003',
-    points: 650,
-    gender: 'Male',
-    age: 45,
-  },
-  {
-    userId: '4',
-    username: 'alice_brown',
-    email: 'alice@example.com',
-    activeStatus: true,
-    totalReviews: 89,
-    joinedDate: '2024-01-05',
-    citizenId: 'CIT004',
-    points: 2340,
-    gender: 'Female',
-    age: 35,
-  },
-  {
-    userId: '5',
-    username: 'charlie_davis',
-    email: 'charlie@example.com',
-    activeStatus: true,
-    totalReviews: 34,
-    joinedDate: '2024-04-12',
-    citizenId: 'CIT005',
-    points: 980,
-    gender: 'Other',
-    age: 29,
-  },  {
-    userId: '4',
-    username: 'alice_brown',
-    email: 'alice@example.com',
-    activeStatus: true,
-    totalReviews: 89,
-    joinedDate: '2024-01-05',
-    citizenId: 'CIT004',
-    points: 2340,
-    gender: 'Female',
-    age: 35,
-  },
-  {
-    userId: '5',
-    username: 'charlie_davis',
-    email: 'charlie@example.com',
-    activeStatus: true,
-    totalReviews: 34,
-    joinedDate: '2024-04-12',
-    citizenId: 'CIT005',
-    points: 980,
-    gender: 'Other',
-    age: 29,
-  },  {
-    userId: '4',
-    username: 'alice_brown',
-    email: 'alice@example.com',
-    activeStatus: true,
-    totalReviews: 89,
-    joinedDate: '2024-01-05',
-    citizenId: 'CIT004',
-    points: 2340,
-    gender: 'Female',
-    age: 35,
-  },
-  {
-    userId: '5',
-    username: 'charlie_davis',
-    email: 'charlie@example.com',
-    activeStatus: true,
-    totalReviews: 34,
-    joinedDate: '2024-04-12',
-    citizenId: 'CIT005',
-    points: 980,
-    gender: 'Other',
-    age: 29,
-  },  {
-    userId: '4',
-    username: 'alice_brown',
-    email: 'alice@example.com',
-    activeStatus: true,
-    totalReviews: 89,
-    joinedDate: '2024-01-05',
-    citizenId: 'CIT004',
-    points: 2340,
-    gender: 'Female',
-    age: 35,
-  },
-  {
-    userId: '5',
-    username: 'charlie_davis',
-    email: 'charlie@example.com',
-    activeStatus: true,
-    totalReviews: 34,
-    joinedDate: '2024-04-12',
-    citizenId: 'CIT005',
-    points: 980,
-    gender: 'Other',
-    age: 29,
-  },  {
-    userId: '4',
-    username: 'alice_brown',
-    email: 'alice@example.com',
-    activeStatus: true,
-    totalReviews: 89,
-    joinedDate: '2024-01-05',
-    citizenId: 'CIT004',
-    points: 2340,
-    gender: 'Female',
-    age: 35,
-  },
-  {
-    userId: '5',
-    username: 'charlie_davis',
-    email: 'charlie@example.com',
-    activeStatus: true,
-    totalReviews: 34,
-    joinedDate: '2024-04-12',
-    citizenId: 'CIT005',
-    points: 980,
-    gender: 'Other',
-    age: 29,
-  },  {
-    userId: '4',
-    username: 'alice_brown',
-    email: 'alice@example.com',
-    activeStatus: true,
-    totalReviews: 89,
-    joinedDate: '2024-01-05',
-    citizenId: 'CIT004',
-    points: 2340,
-    gender: 'Female',
-    age: 35,
-  },
-  {
-    userId: '5',
-    username: 'charlie_davis',
-    email: 'charlie@example.com',
-    activeStatus: true,
-    totalReviews: 34,
-    joinedDate: '2024-04-12',
-    citizenId: 'CIT005',
-    points: 980,
-    gender: 'Other',
-    age: 29,
-  },  {
-    userId: '4',
-    username: 'alice_brown',
-    email: 'alice@example.com',
-    activeStatus: true,
-    totalReviews: 89,
-    joinedDate: '2024-01-05',
-    citizenId: 'CIT004',
-    points: 2340,
-    gender: 'Female',
-    age: 35,
-  },
-  {
-    userId: '5',
-    username: 'charlie_davis',
-    email: 'charlie@example.com',
-    activeStatus: true,
-    totalReviews: 34,
-    joinedDate: '2024-04-12',
-    citizenId: 'CIT005',
-    points: 980,
-    gender: 'Other',
-    age: 29,
-  },
-];
-
-let userIdCounter = MOCK_USERS.length + 1;
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import axiosInstance from "./axiosInstance";
+//gett user id from auth
 
 export const userApi = {
-  getAll: async ({ pageNumber = 0, pageSize = 10 }) => {
-    await delay(500);
-    const start = pageNumber * pageSize;
-    const end = start + pageSize;
-    
-    return {
-      result: MOCK_USERS.slice(start, end),
-      pagination: {
-        totalPageCount: Math.ceil(MOCK_USERS.length / pageSize),
-        pageNumber,
-        pageSize,
-        totalItems: MOCK_USERS.length,
-      },
-    };
-  },
+  // 🔹 Get all users
+getAll: async () => {
+  try {
+    const { data } = await axiosInstance.get("/crowddata/user/allUsers");
 
-  getById: async (id) => {
-    await delay(300);
-    const user = MOCK_USERS.find(u => u.userId === id);
-    if (!user) throw new Error('User not found');
-    return user;
-  },
+    const usersArray = Array.isArray(data)
+      ? data
+      : Array.isArray(data.result)
+      ? data.result
+      : [];
 
+    if (!usersArray.length) {
+      console.warn("Unexpected response format:", data);
+      return { result: [] };
+    }
+
+    const mappedData = usersArray.map((user, index) => ({
+      userId: user.userId,
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      email: user.email || "N/A",
+      userName: user.userName || "N/A",
+      role: user.role || "N/A",
+      gender: user.gender || "N/A",
+      phoneNum: user.phoneNumber || "N/A",
+      joinedDate: user.joinedDate || "N/A",
+      points: user.points || 0,
+      totalReviews: user.numberOfRewardsGiven || 0,
+      activeStatus: user.activeStatus ?? true,
+      rank: index + 1,
+    }));
+
+    return { result: mappedData };
+  } catch (error) {
+    console.error(" Failed to fetch users:", error);
+    throw error;
+  }
+},
+
+
+  // 🔹 Get user by ID
+getById: async (userId) => {
+  try {
+    const { data } = await axiosInstance.get("/crowddata/user/get", {
+      params: { userId },
+    });
+
+    if (!data || !data.result) {
+      console.warn("Unexpected response format:", data);
+      return null;
+    }
+
+    return data.result; //   Return only the actual user object
+  } catch (error) {
+    console.error(`Failed to fetch user (${userId}):`, error);
+    throw error;
+  }
+},
+
+
+  // 🔹 Create a new user
   create: async (userData) => {
-    await delay(500);
-    const newUser = {
-      ...userData,
-      userId: String(userIdCounter++),
-      activeStatus: true,
-      totalReviews: 0,
-      points: 0,
-      joinedDate: new Date().toISOString().split('T')[0],
-    };
-    MOCK_USERS.push(newUser);
-    return newUser;
+    try {
+      const { data } = await axiosInstance.post(
+        "/crowddata/user/create",
+        userData
+      );
+
+      if (!data || !data.userId) {
+        console.warn("Unexpected user creation response:", data);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("   Failed to create user:", error);
+      throw error;
+    }
   },
 
-  update: async (id, userData) => {
-    await delay(500);
-    const index = MOCK_USERS.findIndex(u => u.userId === id);
-    if (index === -1) throw new Error('User not found');
-    
-    MOCK_USERS[index] = { ...MOCK_USERS[index], ...userData };
-    return MOCK_USERS[index];
+  //edit user
+   update: async (id, userData) => {
+    try {
+      const payload = { ...userData, userId: id };
+
+      const { data } = await axiosInstance.post(
+        "/crowddata/user/update",
+        payload
+      );
+      return data;
+    } catch (error) {
+      console.error(" Error updating user:", error);
+      throw error;
+    }
   },
 
-  delete: async (id) => {
-    await delay(500);
-    const index = MOCK_USERS.findIndex(u => u.userId === id);
-    if (index === -1) throw new Error('User not found');
-    
-    MOCK_USERS.splice(index, 1);
-    return { success: true };
+ toggleStatus: async (userId) => {
+    try {
+      const { data } = await axiosInstance.get(
+        "/crowddata/user/toggleActivate",
+        {
+          params: { userId }, //   Query parameters must be passed inside this object
+        }
+      );
+
+      console.log("  Toggle user response:", data);
+      return data;
+    } catch (error) {
+      console.error(`   Failed to toggle user status (${userId}):`, error);
+      throw error;
+    }
   },
 
-  toggleStatus: async (id) => {
-    await delay(300);
-    const user = MOCK_USERS.find(u => u.userId === id);
-    if (!user) throw new Error('User not found');
-    
-    user.activeStatus = !user.activeStatus;
-    return user;
-  },
+  // 🔹 Get total user count
+  getCount: async () => {
+  const { data } = await axiosInstance.get("/crowddata/user/count");
+  // Extract only result value from object
+  return data.result ?? 0;
+},
 
-  search: async (query) => {
-    await delay(400);
-    const results = MOCK_USERS.filter(user =>
-      user.username.toLowerCase().includes(query.toLowerCase()) ||
-      user.email.toLowerCase().includes(query.toLowerCase()) ||
-      user.citizenId.toLowerCase().includes(query.toLowerCase())
-    );
-    
-    return {
-      result: results,
-      pagination: {
-        totalPageCount: 1,
-        pageNumber: 0,
-        pageSize: results.length,
-        totalItems: results.length,
-      },
-    };
-  },
 };

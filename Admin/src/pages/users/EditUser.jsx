@@ -9,15 +9,19 @@ export const EditUser = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  
+
   const [formData, setFormData] = useState({
-    username: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    citizenId: '',
-    gender: 'Male',
-    age: '',
+    userName: '',
+    role: 'wqm-user',
+    gender: 'MALE',
+    phoneNum: '',
+    joinedDate: '',
   });
 
+  //   Fetch existing user details
   const { data: user, isLoading } = useQuery({
     queryKey: ['user', id],
     queryFn: () => userApi.getById(id),
@@ -26,20 +30,24 @@ export const EditUser = () => {
   useEffect(() => {
     if (user) {
       setFormData({
-        username: user.username,
-        email: user.email,
-        citizenId: user.citizenId,
-        gender: user.gender,
-        age: user.age.toString(),
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        userName: user.userName || '',
+        role: user.role || 'wqm-user',
+        gender: user.gender || 'MALE',
+        phoneNum: user.phoneNumber || '',
+        joinedDate: user.joinedDate || '',
       });
     }
   }, [user]);
 
+  //   Mutation to update user
   const updateMutation = useMutation({
     mutationFn: (data) => userApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries({ queryKey: ['user', id] });
+      queryClient.invalidateQueries(['users']);
+      queryClient.invalidateQueries(['user', id]);
       toast.success('User updated successfully!');
       navigate(`/users/${id}`);
     },
@@ -48,16 +56,14 @@ export const EditUser = () => {
     },
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    updateMutation.mutate({
-      ...formData,
-      age: parseInt(formData.age),
-    });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateMutation.mutate(formData);
   };
 
   if (isLoading) {
@@ -82,79 +88,86 @@ export const EditUser = () => {
 
       <div className="bg-gradient-card rounded-lg shadow-soft p-6 max-w-2xl">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-1">
-              Username *
-            </label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            />
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-secondary-700 mb-1">First Name</label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-secondary-700 mb-1">Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-1">
-              Email *
-            </label>
+            <label className="block text-sm font-medium text-secondary-700 mb-1">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
+              disabled
               required
-              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-1">
-              Citizen ID *
-            </label>
+            <label className="block text-sm font-medium text-secondary-700 mb-1">Username</label>
             <input
               type="text"
-              name="citizenId"
-              value={formData.citizenId}
+              name="userName"
+              value={formData.userName}
+              disabled
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-1">
-              Gender *
-            </label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-secondary-700 mb-1">Gender</label>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-1">
-              Age *
-            </label>
-            <input
-              type="number"
-              name="age"
-              value={formData.age}
-              onChange={handleChange}
-              required
-              min="1"
-              max="120"
-              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            />
+            {/* <div>
+              <label className="block text-sm font-medium text-secondary-700 mb-1">Joined Date</label>
+              <input
+                type="date"
+                name="joinedDate"
+                value={formData.joinedDate}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+              />
+            </div> */}
           </div>
 
           <div className="flex gap-4 pt-4">
@@ -165,6 +178,7 @@ export const EditUser = () => {
             >
               {updateMutation.isPending ? 'Updating...' : 'Update User'}
             </button>
+
             <button
               type="button"
               onClick={() => navigate(`/users/${id}`)}
