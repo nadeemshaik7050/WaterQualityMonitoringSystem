@@ -5,6 +5,7 @@ spring:
     mongodb:
       uri: mongodb+srv://nadeemshaik0513_db_user:qEevah6NuwFhKUzi@java.xc442yz.mongodb.net/?appName=Java
       database: Java
+      auto-index-creation: true
   security:
     oauth2:
       resourceserver:

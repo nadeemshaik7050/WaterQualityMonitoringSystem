@@ -19,4 +19,8 @@ public class WaterQualityService {
         waterQualityServiceHelper.validateRequest(waterQualityDataRequestDto);
         return waterQualityServiceHelper.doSubmission(waterQualityDataRequestDto);
     }
+
+    public WaterQualityDataResponseDto getPreviousReviews(String citizenId) {
+        return null;
+    }
 }

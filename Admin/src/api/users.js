@@ -19,7 +19,7 @@ getAll: async () => {
     }
 
     const mappedData = usersArray.map((user, index) => ({
-      userId: user.userId,
+      citizenId: user.citizenId,
       firstName: user.firstName || "",
       lastName: user.lastName || "",
       email: user.email || "N/A",
@@ -43,10 +43,10 @@ getAll: async () => {
 
 
   // 🔹 Get user by ID
-getById: async (userId) => {
+getById: async (citizenId) => {
   try {
     const { data } = await axiosInstance.get("/crowddata/user/get", {
-      params: { userId },
+      params: {citizenId},
     });
 
     if (!data || !data.result) {
@@ -85,7 +85,7 @@ getById: async (userId) => {
   //edit user
    update: async (id, userData) => {
     try {
-      const payload = { ...userData, userId: id };
+      const payload = { ...userData, citizenId: id };
 
       const { data } = await axiosInstance.post(
         "/crowddata/user/update",
@@ -98,12 +98,12 @@ getById: async (userId) => {
     }
   },
 
- toggleStatus: async (userId) => {
+ toggleStatus: async (citizenId) => {
     try {
       const { data } = await axiosInstance.get(
         "/crowddata/user/toggleActivate",
         {
-          params: { userId }, //   Query parameters must be passed inside this object
+          params: { citizenId }, //   Query parameters must be passed inside this object
         }
       );
 

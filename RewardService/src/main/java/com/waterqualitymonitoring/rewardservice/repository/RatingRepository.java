@@ -11,4 +11,7 @@ public interface RatingRepository extends CrudRepository<Rating,String> {
     List<Rating> findByIsActiveTrue();
     Rating findByIdAndIsActiveTrue(String id);
     Rating findFirstByMinPointsLessThanEqualAndMaxPointsGreaterThanEqualAndIsActiveTrue(Long points);
+    Rating findByMinPointsAndMaxPoints(Long minPoints, Long maxPoints);
+    Rating findByName(String name);
+
 }

@@ -6,10 +6,7 @@ import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataR
 import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.service.WaterQualityService;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/crowddata/waterquality")
@@ -24,5 +21,10 @@ public class WaterQualityController {
     @PostMapping(value = "/submit",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CrowdDataResponse<WaterQualityDataResponseDto> submitWaterQualityData (@RequestBody WaterQualityDataRequestDto waterQualityDataRequestDto) throws CrowdDataSourceException {
         return CrowdDataResponse.success(waterQualityService.doSubmission(waterQualityDataRequestDto));
+    }
+
+    @GetMapping("/previousReviews")
+    public CrowdDataResponse<WaterQualityDataResponseDto> getPreviousReviews (@RequestParam String citizenId) throws CrowdDataSourceException {
+        return CrowdDataResponse.success(waterQualityService.getPreviousReviews(citizenId));
     }
 }

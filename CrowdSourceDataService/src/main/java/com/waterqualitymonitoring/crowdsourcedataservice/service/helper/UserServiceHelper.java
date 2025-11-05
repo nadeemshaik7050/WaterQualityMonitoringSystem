@@ -5,6 +5,7 @@ import com.waterqualitymonitoring.crowdsourcedataservice.entity.User;
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceError;
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceException;
 import com.waterqualitymonitoring.crowdsourcedataservice.mapper.UserMapper;
+import com.waterqualitymonitoring.crowdsourcedataservice.model.UserRankingDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.UserRequestDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.UserResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.repository.UserRepository;
@@ -14,11 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -63,7 +67,7 @@ public class UserServiceHelper {
 
         User user = userMapper.toEntity(userRequestDto);
         user.setPoints(0L);
-        user.setNumberOfRewardsGiven(0L);
+        user.setNumberOfReviewsGiven(0L);
 
         userRepository.save(user);
     }
@@ -122,8 +126,8 @@ public class UserServiceHelper {
         return userMapper.toDto(user);
     }
 
-    public List<UserResponseDto> getAllActiveUsers() {
-        List<User> users = userRepository.findByIsActiveTrue();
+    public List<UserResponseDto> getAllUsers() {
+        List<User> users = (List<User>) userRepository.findAll();
         List<UserResponseDto> userResponseDtos = new ArrayList<>();
         for (User user : users) {
             userResponseDtos.add(userMapper.toDto(user));
@@ -141,6 +145,7 @@ public class UserServiceHelper {
             existingUser.setFirstName(userRequestDto.getFirstName());
             existingUser.setLastName(userRequestDto.getLastName());
             existingUser.setEmail(userRequestDto.getEmail());
+            updateUserInKeycloak(existingUser, userRequestDto);
             userRepository.save(existingUser);
             return;
         }
@@ -151,9 +156,67 @@ public class UserServiceHelper {
         User user = userRepository.findByCitizenId(citizenId);
         if (user != null) {
             user.setActive(!user.isActive());
+            toggleActivateUser(user);
             userRepository.save(user);
             return;
         }
         throw new CrowdDataSourceException(CrowdDataSourceError.USER_NOT_FOUND);
     }
+
+    public void toggleActivateUser(User user) throws CrowdDataSourceException {
+        // Sync with Keycloak
+        if (user.getCitizenId() != null && !user.getCitizenId().isEmpty()) {
+            try {
+                var usersResource = keycloak.realm(keycloakProperties.realm()).users();
+                var kcUserResource = usersResource.get(user.getCitizenId());
+                UserRepresentation rep = kcUserResource.toRepresentation();
+                rep.setEnabled(user.isActive());
+                kcUserResource.update(rep);
+            } catch (Exception e) {
+                log.warn("Failed to update Keycloak enabled flag for user {}: {}", e.getMessage());
+                throw new CrowdDataSourceException(CrowdDataSourceError.KEYCLOAK_EXTERNAL_SERVICE_ERROR );
+            }
+        }
+    }
+
+    private void updateUserInKeycloak(User user, UserRequestDto userRequestDto) throws CrowdDataSourceException {
+        if (user.getCitizenId() == null || user.getCitizenId().isEmpty()) {
+            return;
+        }
+        try {
+            var usersResource = keycloak.realm(keycloakProperties.realm()).users();
+            var kcUserResource = usersResource.get(user.getCitizenId());
+            UserRepresentation rep = kcUserResource.toRepresentation();
+
+            boolean changed = false;
+            if (userRequestDto.getFirstName() != null && !userRequestDto.getFirstName().equals(rep.getFirstName())) {
+                rep.setFirstName(userRequestDto.getFirstName());
+                changed = true;
+            }
+            if (userRequestDto.getLastName() != null && !userRequestDto.getLastName().equals(rep.getLastName())) {
+                rep.setLastName(userRequestDto.getLastName());
+                changed = true;
+            }
+            if (userRequestDto.getEmail() != null && !userRequestDto.getEmail().equals(rep.getEmail())) {
+                rep.setEmail(userRequestDto.getEmail());
+                changed = true;
+            }
+            if (changed) {
+                kcUserResource.update(rep);
+            }
+
+        } catch (Exception e) {
+            log.warn("Failed to update Keycloak user {}: {}", user.getCitizenId(), e.getMessage());
+            throw new CrowdDataSourceException(CrowdDataSourceError.KEYCLOAK_EXTERNAL_SERVICE_ERROR);
+        }
+    }
+
+    public List<UserRankingDto> getUserRankings() throws CrowdDataSourceException {
+        // Fetch active users sorted by points desc, then reviewCount desc
+        List<User> users = userRepository.findAllByIsActiveTrue(
+                Sort.by(Sort.Order.desc("points"), Sort.Order.desc("reviewCount"))
+        );
+        return (List<UserRankingDto>) users.stream().map(user-> UserMapper.INSTANCE.toRankingDto(user)).toList();
+    }
+
 }

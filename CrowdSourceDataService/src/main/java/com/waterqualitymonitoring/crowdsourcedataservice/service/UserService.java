@@ -1,6 +1,7 @@
 package com.waterqualitymonitoring.crowdsourcedataservice.service;
 
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceException;
+import com.waterqualitymonitoring.crowdsourcedataservice.model.UserRankingDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.UserRequestDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.UserResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.service.helper.UserServiceHelper;
@@ -23,12 +24,12 @@ public class UserService {
     }
 
 
-    public UserResponseDto getUser(String userId) throws CrowdDataSourceException {
-        return userServiceHelper.getUser(userId);
+    public UserResponseDto getUser(String citizenId) throws CrowdDataSourceException {
+        return userServiceHelper.getUser(citizenId);
     }
 
     public List<UserResponseDto> getAllUsers() {
-        return userServiceHelper.getAllActiveUsers();
+        return userServiceHelper.getAllUsers();
     }
 
     public Long getUserCount() {
@@ -39,7 +40,11 @@ public class UserService {
         userServiceHelper.updateUser(userRequestDto);
     }
 
-    public void toggleActivateUser(String userId) throws CrowdDataSourceException {
-        userServiceHelper.toggleActivateUser(userId);
+    public void toggleActivateUser(String citizenId) throws CrowdDataSourceException {
+        userServiceHelper.toggleActivateUser(citizenId);
+    }
+
+    public List<UserRankingDto> getUserRankings() throws CrowdDataSourceException {
+        return userServiceHelper.getUserRankings();
     }
 }

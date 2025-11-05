@@ -25,8 +25,8 @@ public class UserController {
     }
 
     @GetMapping("/get")
-    public CrowdDataResponse<UserResponseDto> getUser(@RequestParam String userId) throws CrowdDataSourceException {
-        return CrowdDataResponse.success(userService.getUser(userId));
+    public CrowdDataResponse<UserResponseDto> getUser(@RequestParam String citizenId) throws CrowdDataSourceException {
+        return CrowdDataResponse.success(userService.getUser(citizenId));
     }
 
     @GetMapping("/allUsers")
@@ -49,8 +49,13 @@ public class UserController {
 
     @GetMapping("/toggleActivate")
     @PreAuthorize("hasRole('wqm-admin')")
-    public void toggleActivateUser(@RequestParam String userId) throws CrowdDataSourceException {
-        userService.toggleActivateUser(userId);
+    public void toggleActivateUser(@RequestParam String citizenId) throws CrowdDataSourceException {
+        userService.toggleActivateUser(citizenId);
+    }
+
+    @GetMapping("/rankings")
+    public CrowdDataResponse<List<UserRankingDto>> getUserRankings() throws CrowdDataSourceException {
+        return CrowdDataResponse.success(userService.getUserRankings());
     }
 
 }

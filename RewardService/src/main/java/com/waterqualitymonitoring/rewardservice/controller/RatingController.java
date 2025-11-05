@@ -30,7 +30,7 @@ public class RatingController {
     @PostMapping(value = "/add",consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<String> addRating( @RequestParam("name") String name,
                                              @RequestParam("minPoints") Long minPoints,
-                                             @RequestPart("maxPoints") Long maxPoints,
+                                             @RequestParam("maxPoints") Long maxPoints,
                                              @RequestPart("image") MultipartFile image) throws IOException, RatingException {
         RatingDto ratingDto=ratingServiceHelper.createRatingDto(name, minPoints,maxPoints, image);
         ratingService.addRating(ratingDto);
@@ -50,7 +50,7 @@ public class RatingController {
     @PostMapping(value = "/update", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<String> updateRating( @RequestParam("name") String name,
                                                 @RequestParam("minPoints") Long minPoints,
-                                                @RequestPart("maxPoints") Long maxPoints,
+                                                @RequestParam("maxPoints") Long maxPoints,
                                                 @RequestPart("image") MultipartFile image) throws RatingException, IOException {
         RatingDto ratingDto=ratingServiceHelper.createRatingDto(name, minPoints,maxPoints, image);
         ratingService.updateRating(ratingDto);
@@ -60,6 +60,11 @@ public class RatingController {
     @GetMapping("/toggleRating")
     public void toggleActivateRating(@RequestParam String ratingId) throws RatingException {
         ratingService.toggleActivateRating(ratingId);
+    }
+
+    @GetMapping("/count")
+    public RewardServiceResponse<Integer> getcount() {
+        return RewardServiceResponse.success(ratingService.getCountOfActiveRatings());
     }
 
 }

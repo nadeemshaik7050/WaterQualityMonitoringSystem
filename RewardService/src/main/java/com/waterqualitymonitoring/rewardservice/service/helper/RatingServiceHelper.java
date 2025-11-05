@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -38,10 +39,19 @@ public class RatingServiceHelper {
         }
     }
 
-    public void addRating(RatingDto ratingDto) {
+    public void addRating(RatingDto ratingDto) throws RatingException {
         // Implementation for adding a rating in the database
-        Rating rating= RatingMapper.INSTANCE.toEntity(ratingDto);
-        ratingRepository.save(rating);
+        Rating rating = RatingMapper.INSTANCE.toEntity(ratingDto);
+        try {
+            Rating existingRating = ratingRepository.findByMinPointsAndMaxPoints(ratingDto.getMinPoints(), ratingDto.getMaxPoints());
+            if (existingRating != null) {
+                throw new RatingException(RewardServiceError.RATING_ALREADY_EXISTS);
+            }
+            ratingRepository.save(rating);
+        } catch (Exception e) {
+            throw new RatingException(((Integer)e.hashCode()).toString(),e.getMessage());
+
+        }
     }
 
     public RatingDto createRatingDto(String name, Long minPoints,Long maxPoints, MultipartFile image) throws IOException {
@@ -63,12 +73,26 @@ public class RatingServiceHelper {
     }
 
     public List<Rating> getAllRatings() {
-        return new ArrayList<>(ratingRepository.findByIsActiveTrue());
+        return new ArrayList<>((Collection) ratingRepository.findAll());
     }
 
-    public void updateRating(RatingDto ratingDto) {
-        Rating rating= RatingMapper.INSTANCE.toEntity(ratingDto);
-        ratingRepository.save(rating);
+    public void updateRating(RatingDto ratingDto) throws RatingException {
+
+        try {
+            Rating existingRating = ratingRepository.findByName(ratingDto.getName());
+            Rating inRange=ratingRepository.findByMinPointsAndMaxPoints(ratingDto.getMinPoints(), ratingDto.getMaxPoints());
+            if (inRange!=null) {
+                throw new RatingException(RewardServiceError.RATING_ALREADY_EXISTS);
+            }
+            existingRating.setName(ratingDto.getName());
+            existingRating.setMinPoints(ratingDto.getMinPoints());
+            existingRating.setMaxPoints(ratingDto.getMaxPoints());
+            existingRating.setImage(ratingDto.getImage());
+            ratingRepository.save(existingRating);
+        } catch (Exception e) {
+            throw new RatingException(((Integer)e.hashCode()).toString(),e.getMessage());
+
+        }
     }
 
     public void toggleActivateRating(String ratingId) throws RatingException {
@@ -79,5 +103,9 @@ public class RatingServiceHelper {
             return;
         }
         throw new RatingException(RewardServiceError.RATING_NOT_FOUND);
+    }
+
+    public Integer getCountOfActiveRatings() {
+        return ratingRepository.findByIsActiveTrue().size();
     }
 }

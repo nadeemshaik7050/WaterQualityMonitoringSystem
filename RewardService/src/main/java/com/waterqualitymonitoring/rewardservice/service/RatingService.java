@@ -36,4 +36,8 @@ public class RatingService {
     public void toggleActivateRating(String ratingId) throws RatingException {
         ratingServiceHelper.toggleActivateRating(ratingId);
     }
+
+    public Integer getCountOfActiveRatings() {
+        return ratingServiceHelper.getCountOfActiveRatings();
+    }
 }
