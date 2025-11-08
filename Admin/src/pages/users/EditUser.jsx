@@ -21,7 +21,7 @@ export const EditUser = () => {
     joinedDate: '',
   });
 
-  //   Fetch existing user details
+  // Fetch existing user details
   const { data: user, isLoading } = useQuery({
     queryKey: ['user', id],
     queryFn: () => userApi.getById(id),
@@ -42,7 +42,7 @@ export const EditUser = () => {
     }
   }, [user]);
 
-  //   Mutation to update user
+  // Mutation to update user
   const updateMutation = useMutation({
     mutationFn: (data) => userApi.update(id, data),
     onSuccess: () => {
@@ -86,109 +86,114 @@ export const EditUser = () => {
         <h1 className="text-3xl font-bold">Edit User</h1>
       </div>
 
-      <div className="bg-gradient-card rounded-lg shadow-soft p-6 max-w-2xl">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      {user?.active ? (
+        <div className="bg-gradient-card rounded-lg shadow-soft p-6 max-w-2xl">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-1">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-1">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+            </div>
+
             <div>
-              <label className="block text-sm font-medium text-secondary-700 mb-1">First Name</label>
+              <label className="block text-sm font-medium text-secondary-700 mb-1">
+                Email
+              </label>
               <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
+                type="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
+                disabled
                 required
                 className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-secondary-700 mb-1">Last Name</label>
+              <label className="block text-sm font-medium text-secondary-700 mb-1">
+                Username
+              </label>
               <input
                 type="text"
-                name="lastName"
-                value={formData.lastName}
+                name="userName"
+                value={formData.userName}
+                disabled
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
               />
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled
-              required
-              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-            />
-          </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-1">
+                  Gender
+                </label>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-secondary-700 mb-1">Username</label>
-            <input
-              type="text"
-              name="userName"
-              value={formData.userName}
-              disabled
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-secondary-700 mb-1">Gender</label>
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+            <div className="flex gap-4 pt-4">
+              <button
+                type="submit"
+                disabled={updateMutation.isPending}
+                className="px-6 py-2 bg-gradient-primary text-white rounded-lg hover:shadow-medium disabled:opacity-50 transition-all"
               >
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
-                <option value="OTHER">Other</option>
-              </select>
+                {updateMutation.isPending ? 'Updating...' : 'Update User'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigate(`/users/${id}`)}
+                className="px-6 py-2 border border-secondary-300 rounded-lg hover:bg-secondary-50 transition-colors"
+              >
+                Cancel
+              </button>
             </div>
-
-            {/* <div>
-              <label className="block text-sm font-medium text-secondary-700 mb-1">Joined Date</label>
-              <input
-                type="date"
-                name="joinedDate"
-                value={formData.joinedDate}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-              />
-            </div> */}
-          </div>
-
-          <div className="flex gap-4 pt-4">
-            <button
-              type="submit"
-              disabled={updateMutation.isPending}
-              className="px-6 py-2 bg-gradient-primary text-white rounded-lg hover:shadow-medium disabled:opacity-50 transition-all"
-            >
-              {updateMutation.isPending ? 'Updating...' : 'Update User'}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => navigate(`/users/${id}`)}
-              className="px-6 py-2 border border-secondary-300 rounded-lg hover:bg-secondary-50 transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-64">
+          <span className="text-gray-500 text-center">
+            User is currently disabled, kindly enable to view details
+          </span>
+        </div>
+      )}
     </div>
   );
 };

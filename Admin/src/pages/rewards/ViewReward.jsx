@@ -87,7 +87,7 @@ export default function ViewReward() {
 
       <div>
         <label className="block text-sm font-medium text-secondary-500">Created Date</label>
-        <p className="mt-1 text-lg">{reward?.creationDate || "NA"}</p>
+        <p className="mt-1 text-lg">{reward?.creationDate.split("T")[0] || "NA"}</p>
       </div>
     </div>
 

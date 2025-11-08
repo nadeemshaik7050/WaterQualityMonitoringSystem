@@ -42,11 +42,18 @@ export const ViewUser = () => {
       </div>
     );
   }
-
-  if (!user) {
-    return <div className="text-center text-red-600 p-4">User not found</div>;
-  }
-
+if (!user) {
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <div className="text-red-600 p-4 text-center">
+        User not found
+      </div>
+      <span className="text-gray-400 text-center">
+        User is currently disabled, kindly enable to view details
+      </span>
+    </div>
+  );
+}
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       deleteMutation.mutate(id);
@@ -78,47 +85,47 @@ export const ViewUser = () => {
   <div className="grid grid-cols-2 gap-6">
     <div>
       <label className="block text-sm font-medium text-gray-500 mb-1">Username</label>
-      <p className="text-lg">{user.userName}</p>
+      <p className="text-lg">{user.userName ?? "NA"}</p>
     </div>
 
     <div>
       <label className="block text-sm font-medium text-gray-500 mb-1">Email</label>
-      <p className="text-lg">{user.email}</p>
+      <p className="text-lg">{user.email ?? "NA"}</p>
     </div>
 
     <div>
       <label className="block text-sm font-medium text-gray-500 mb-1">First Name</label>
-      <p className="text-lg">{user.firstName}</p>
+      <p className="text-lg">{user.firstName ?? "NA"}</p>
     </div>
 
     <div>
       <label className="block text-sm font-medium text-gray-500 mb-1">Last Name</label>
-      <p className="text-lg">{user.lastName}</p>
+      <p className="text-lg">{user.lastName ?? "NA"}</p>
     </div>
 
     <div>
       <label className="block text-sm font-medium text-gray-500 mb-1">Gender</label>
-      <p className="text-lg capitalize">{user.gender?.toLowerCase()}</p>
+      <p className="text-lg capitalize">{user.gender?.toLowerCase() ?? "NA"}</p>
     </div>
 
     <div>
       <label className="block text-sm font-medium text-gray-500 mb-1">Role</label>
-      <p className="text-lg">{user.role}</p>
+      <p className="text-lg">{user.role ?? "NA"}</p>
     </div>
 
     <div>
       <label className="block text-sm font-medium text-gray-500 mb-1">Joined Date</label>
-      <p className="text-lg">{user.joinedDate}</p>
+      <p className="text-lg">{user.joinedDate ?? "NA"}</p>
     </div>
 
     <div>
       <label className="block text-sm font-medium text-gray-500 mb-1">Points</label>
-      <p className="text-lg font-semibold text-blue-600">{user.points}</p>
+      <p className="text-lg font-semibold text-blue-600">{user.points ?? 0}</p>
     </div>
 
     <div>
-      <label className="block text-sm font-medium text-gray-500 mb-1">Rewards Given</label>
-      <p className="text-lg">{user.numberOfRewardsGiven}</p>
+      <label className="block text-sm font-medium text-gray-500 mb-1">Reviews Given</label>
+      <p className="text-lg">{user.numberOfReviewsGiven ?? 0}</p>
     </div>
 
      <div>

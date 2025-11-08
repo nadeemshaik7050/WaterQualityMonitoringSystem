@@ -24,9 +24,13 @@ export default function RewardsList() {
   const allRewards = data?.result || [];
 
   //   Frontend filter (case-insensitive)
-  const filteredRewards = allRewards.filter((reward) =>
-    reward.rewardName.toLowerCase().includes(debouncedSearch.toLowerCase())
-  );
+// Frontend filter (case-insensitive)
+const filteredRewards = allRewards.filter((reward) => {
+  const name = reward?.name?.toLowerCase() || "";
+  const search = debouncedSearch?.toLowerCase() || "";
+  return name.includes(search);
+});
+
 
   //   Pagination logic (still works)
   const totalPages = Math.ceil(filteredRewards.length / pageSize);
@@ -132,7 +136,7 @@ const handleToggleStatus = async (rewardId) => {
                     className="hover:bg-secondary-50 transition-colors"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {reward.rewardName ?? "NA"}
+                      {reward.name ?? "NA"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {reward.minPoints ?? "NA"}
@@ -143,32 +147,32 @@ const handleToggleStatus = async (rewardId) => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`px-2 py-1 rounded text-xs ${
-                          !reward.active
+                          reward.active
                             ? 'bg-green-100 text-green-800'
                             : 'bg-red-100 text-red-800'
                         }`}
                       >
-                        {!reward.active ? 'Active' : 'Inactive'}
+                        {reward.active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex items-center gap-2">
                         <Link
-                          to={`/rewards/${reward.rewardId}`}
+                          to={`/rewards/${reward.id}`}
                           className="text-blue-600 hover:text-blue-900"
                           title="View"
                         >
                           <Eye size={18} />
                         </Link>
                         <Link
-                          to={`/rewards/edit/${reward.rewardId}`}
+                          to={`/rewards/edit/${reward.id}`}
                           className="text-green-600 hover:text-green-900"
                           title="Edit"
                         >
                           <Edit size={18} />
                         </Link>
                         <button
-                          onClick={() => handleToggleStatus(reward.rewardId)}
+                          onClick={() => handleToggleStatus(reward.id)}
                           className="text-orange-600 hover:text-orange-900"
                           title="Toggle Status"
                         >

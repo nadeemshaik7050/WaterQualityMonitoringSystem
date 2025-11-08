@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Plus, Eye, Edit, Trash2, Power } from 'lucide-react';
 import { userApi } from '../../api/users';
@@ -11,51 +11,53 @@ export const UsersList = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-const { data, isLoading, error } = useQuery({
-  queryKey: ['users'],
-  queryFn: () => userApi.getAll(),
-});
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => userApi.getAll(),
+  });
+
+  const queryClient = useQueryClient();
 
 
+  // Extract users safely
+  const allUsers = data?.result || [];
+  console.log(allUsers + "allUsers")
 
+  // Filter users locally based on debounced search text
+  const filteredUsers = allUsers.filter((user) => {
+    const searchLower = debouncedSearch.toLowerCase();
+    return (
+      user.userName.toLowerCase().includes(searchLower) ||
+      user.email.toLowerCase().includes(searchLower) ||
+      user.firstName.toLowerCase().includes(searchLower) ||
+      user.lastName.toLowerCase().includes(searchLower)
+    );
+  });
 
-// Extract users safely
-const allUsers = data?.result || [];
-
-// Filter users locally based on debounced search text
-const filteredUsers = allUsers.filter((user) => {
-  const searchLower = debouncedSearch.toLowerCase();
-  return (
-    user.userName.toLowerCase().includes(searchLower) ||
-    user.email.toLowerCase().includes(searchLower) ||
-    user.firstName.toLowerCase().includes(searchLower) ||
-    user.lastName.toLowerCase().includes(searchLower)
-  );
-});
-
-// Paginate after filtering
-const pageSize = 10;
-const paginatedUsers = filteredUsers.slice(pageNumber * pageSize, (pageNumber + 1) * pageSize);
-const totalPageCount = Math.ceil(filteredUsers.length / pageSize);
-
+  // Paginate after filtering
+  const pageSize = 10;
+  const paginatedUsers = filteredUsers.slice(pageNumber * pageSize, (pageNumber + 1) * pageSize);
+  const totalPageCount = Math.ceil(filteredUsers.length / pageSize);
 
 
   const users = data?.result || [];
   const pagination = data?.pagination || { totalPageCount: 1, pageNumber: 0 };
 
-const handleToggleStatus = async (id) => {
-  try {
-    await userApi.toggleStatus(id);
-    toast.success('Status toggled successfully!');
-  } catch (error) {
-    toast.error('Failed to toggle status: ' + error.message);
-  }
-};
+  const handleToggleStatus = async (id) => {
+    try {
+      await userApi.toggleStatus(id);
+      toast.success('Status toggled successfully!');
 
+      // Refetch or invalidate cache to update list
+      await queryClient.invalidateQueries(['users']);
+    } catch (error) {
+      toast.error('Failed to toggle status: ' + error.message);
+    }
+  };
 
   // const handleDelete = async (id) => {
   //   if (!window.confirm('Are you sure you want to delete this user?')) return;
-    
+
   //   try {
   //     await userApi.delete(id);
   //     window.location.reload();
@@ -119,54 +121,56 @@ const handleToggleStatus = async (id) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-secondary-200">
-{paginatedUsers.length === 0 ? (
+              {paginatedUsers.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="px-6 py-8 text-center text-secondary-500">
                     No users found
                   </td>
                 </tr>
               ) : (
-  paginatedUsers.map((user) => (
-                      <tr key={user.userId} className="hover:bg-secondary-50 transition-colors">
+                paginatedUsers.map((user) => (
+                  <tr key={user.citizenId} className="hover:bg-secondary-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">{user.userName}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{user.points}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{user.totalReviews}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        user.activeStatus 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {user.activeStatus ? 'Active' : 'Inactive'}
+                      <span
+                        className={`px-2 py-1 rounded text-xs ${user?.active
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                          }`}
+                      >
+                        {user?.active ? 'Active' : 'Inactive'}
                       </span>
+
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex items-center gap-2">
                         <Link
-                          to={`/users/${user.userId}`}
+                          to={`/users/${user.citizenId}`}
                           className="text-blue-600 hover:text-blue-900"
                           title="View"
                         >
                           <Eye size={18} />
                         </Link>
                         <Link
-                          to={`/users/edit/${user.userId}`}
+                          to={`/users/edit/${user.citizenId}`}
                           className="text-green-600 hover:text-green-900"
                           title="Edit"
                         >
                           <Edit size={18} />
                         </Link>
                         <button
-                          onClick={() => handleToggleStatus(user.userId)}
+                          onClick={() => handleToggleStatus(user.citizenId)}
                           className="text-orange-600 hover:text-orange-900"
                           title="Toggle Status"
                         >
                           <Power size={18} />
                         </button>
                         {/* <button
-                          onClick={() => handleDelete(user.userId)}
+                          onClick={() => handleDelete(user.citizenId)}
                           className="text-red-600 hover:text-red-900"
                           title="Delete"
                         >
@@ -191,7 +195,7 @@ const handleToggleStatus = async (id) => {
               Previous
             </button>
             <span className="text-sm text-secondary-700">
-             Page {pageNumber + 1} of {totalPageCount}
+              Page {pageNumber + 1} of {totalPageCount}
             </span>
             <button
               onClick={() => setPageNumber(p => p + 1)}

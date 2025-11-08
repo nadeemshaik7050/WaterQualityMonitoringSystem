@@ -9,12 +9,10 @@ export default function EditReward() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    rewardName: '',
-    rank: '',
-    level: 'Bronze',
+    name: '',
+    image:"",
     minPoints: '',
     maxPoints:'',
-    description: '',
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -24,22 +22,24 @@ export default function EditReward() {
     queryFn: () => rewardApi.getById(id),
   });
 
-  useEffect(() => {
-    if (reward) {
-      setFormData({
-        rewardName: reward.rewardName,
-        rank: reward.rank,
-        level: reward.level,
-        minPoints: reward.minPoints,
-        maxPoints: reward.maxPoints,
-        description: reward.description || '',
-      });
-      // Set existing image as preview
-      if (reward.imageUrl) {
-        setImagePreview(reward.imageUrl);
-      }
+useEffect(() => {
+  if (reward) {
+    setFormData({
+      name: reward.name || '',
+      image: reward.image || '',
+      minPoints: reward.minPoints || '',
+      maxPoints: reward.maxPoints || '',
+    });
+
+    // ✅ Set image preview from base64 data if available
+    if (reward.image?.data) {
+      const base64String = reward.image.data;
+      const imageSrc = `data:image/png;base64,${base64String}`;
+      setImagePreview(imageSrc);
     }
-  }, [reward]);
+  }
+}, [reward]);
+
 
 const updateMutation = useMutation({
   mutationFn: (data) => rewardApi.updateReward(data),
@@ -56,14 +56,27 @@ const updateMutation = useMutation({
 const handleSubmit = (e) => {
   e.preventDefault();
 
-  const payload = {
-    name: formData.rewardName,
-    minPoints: formData.minPoints,
-    maxPoints: formData.maxPoints,
-    image:formData
-  };
+  const data = new FormData();
+  data.append("name", formData.name);
+  data.append("minPoints", formData.minPoints);
+  data.append("maxPoints", formData.maxPoints);
 
-  updateMutation.mutate(payload);
+  if (imageFile) {
+    // user uploaded a new image file
+    data.append("image", imageFile);
+  } else if (reward?.image?.data) {
+    // user didn't upload a new image → convert base64 back to Blob
+    const byteCharacters = atob(reward.image.data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "image/png" });
+    data.append("image", blob, "existing.png");
+  }
+
+  updateMutation.mutate(data);
 };
 
 
@@ -186,8 +199,8 @@ const handleSubmit = (e) => {
             </label>
             <input
               type="text"
-              name="rewardName"
-              value={formData.rewardName}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               required
               className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"

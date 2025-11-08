@@ -22,15 +22,15 @@ getAll: async () => {
       citizenId: user.citizenId,
       firstName: user.firstName || "",
       lastName: user.lastName || "",
-      email: user.email || "N/A",
+      email: user.email || "N/A", 
       userName: user.userName || "N/A",
       role: user.role || "N/A",
       gender: user.gender || "N/A",
       phoneNum: user.phoneNumber || "N/A",
       joinedDate: user.joinedDate || "N/A",
       points: user.points || 0,
-      totalReviews: user.numberOfRewardsGiven || 0,
-      activeStatus: user.activeStatus ?? true,
+      totalReviews: user.numberOfReviewsGiven || 0,
+      active: user.active ?? true,
       rank: index + 1,
     }));
 
@@ -41,6 +41,48 @@ getAll: async () => {
   }
 },
 
+ getMaxPointsUsers: async () => {
+    try {
+      const { result } = await userApi.getAll();
+
+      if (!result.length) return { result: [] };
+
+      // Find the maximum points
+      const maxPoints = Math.max(...result.map(user => user.points));
+
+      // Filter users who have that maximum
+      const maxPointsUsers = result.filter(user => user.points === maxPoints);
+      console.log(maxPointsUsers+"maxPointsUsers")
+
+      return { result: maxPointsUsers, maxPoints };
+    } catch (error) {
+      console.error("Failed to fetch max points users:", error);
+      throw error;
+    }
+  },
+
+ getGenderCount: async () => {
+    try {
+      const { result } = await userApi.getAll();
+
+      if (!result.length) return { male: 0, female: 0 };
+
+      // Normalize gender values to lowercase for consistency
+      const maleCount = result.filter(
+        user => user.gender?.toLowerCase() === "male"
+      ).length;
+
+      const femaleCount = result.filter(
+        user => user.gender?.toLowerCase() === "female"
+      ).length;
+
+      return { male: maleCount, female: femaleCount };
+    } catch (error) {
+      console.error("Failed to fetch gender count:", error);
+      throw error;
+    }
+  }
+,
 
   // 🔹 Get user by ID
 getById: async (citizenId) => {
