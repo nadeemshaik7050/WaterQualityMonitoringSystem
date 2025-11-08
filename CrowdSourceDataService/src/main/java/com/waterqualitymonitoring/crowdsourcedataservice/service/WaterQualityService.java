@@ -1,6 +1,7 @@
 package com.waterqualitymonitoring.crowdsourcedataservice.service;
 
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceException;
+import com.waterqualitymonitoring.crowdsourcedataservice.model.ReviewsResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataRequestDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.repository.WaterQualityDataRepository;
@@ -22,7 +23,7 @@ public class WaterQualityService {
         return waterQualityServiceHelper.doSubmission(waterQualityDataRequestDto);
     }
 
-    public List<WaterQualityDataResponseDto> getPreviousReviews(String citizenId) {
+    public List<ReviewsResponseDto> getPreviousReviews(String citizenId) {
         return waterQualityServiceHelper.getPreviousReviews(citizenId);
     }
 }

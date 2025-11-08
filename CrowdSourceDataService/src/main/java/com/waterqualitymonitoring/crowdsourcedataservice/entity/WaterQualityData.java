@@ -2,10 +2,7 @@ package com.waterqualitymonitoring.crowdsourcedataservice.entity;
 
 import com.waterqualitymonitoring.crowdsourcedataservice.model.Measurement;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.Observations;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.Binary;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,6 +13,7 @@ import java.util.List;
 @Data
 @SuperBuilder(toBuilder = true)
 @AllArgsConstructor
+@NoArgsConstructor
 @Document("water_quality_data")
 public class WaterQualityData extends AbstractEntity {
     private String postalCode;

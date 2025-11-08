@@ -4,6 +4,7 @@ import com.waterqualitymonitoring.crowdsourcedataservice.entity.WaterQualityData
 import com.waterqualitymonitoring.crowdsourcedataservice.entity.WaterQualitySubmitLog;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.Measurement;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.Observations;
+import com.waterqualitymonitoring.crowdsourcedataservice.model.ReviewsResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataRequestDto;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -24,4 +25,7 @@ public interface WaterQualitySubmitMapper {
                 .build();
     }
 
+    @Mapping(source = "rewardsPointGiven", target = "pointsAwarded")
+    @Mapping(source = "submitTime", target = "reviewDate", dateFormat = "yyyy-MM-dd")
+    ReviewsResponseDto toReviewsResponseDto(WaterQualitySubmitLog submitLog);
 }

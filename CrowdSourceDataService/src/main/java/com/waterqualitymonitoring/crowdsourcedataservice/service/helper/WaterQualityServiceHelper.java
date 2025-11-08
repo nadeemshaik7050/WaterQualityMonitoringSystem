@@ -6,16 +6,14 @@ import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSour
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceException;
 import com.waterqualitymonitoring.crowdsourcedataservice.feignclient.RewardsFeignClient;
 import com.waterqualitymonitoring.crowdsourcedataservice.mapper.WaterQualitySubmitMapper;
-import com.waterqualitymonitoring.crowdsourcedataservice.model.RewardRequestDto;
-import com.waterqualitymonitoring.crowdsourcedataservice.model.RewardResponseDto;
-import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataRequestDto;
-import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataResponseDto;
+import com.waterqualitymonitoring.crowdsourcedataservice.model.*;
 import com.waterqualitymonitoring.crowdsourcedataservice.repository.WaterQualitySubmitLogRepository;
 import com.waterqualitymonitoring.crowdsourcedataservice.utility.WQMUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -93,9 +91,10 @@ public class WaterQualityServiceHelper {
         return rewardsFeignClient.callRewardService(rewardRequestDto);
     }
 
-    public List<WaterQualityDataResponseDto> getPreviousReviews(String citizenId) {
+    public List<ReviewsResponseDto> getPreviousReviews(String citizenId) {
         List<WaterQualitySubmitLog> submitLogs=waterQualitySubmitLogRepository.findByCitizenId(citizenId);
-        List<WaterQualityDataResponseDto> waterQualityDataResponseDtos=null;
-        return waterQualityDataResponseDtos;
+        return submitLogs.stream()
+                .map(WaterQualitySubmitMapper.INSTANCE::toReviewsResponseDto)
+                .toList();
     }
 }

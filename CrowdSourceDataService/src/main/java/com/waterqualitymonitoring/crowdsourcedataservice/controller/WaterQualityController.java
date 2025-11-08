@@ -1,10 +1,7 @@
 package com.waterqualitymonitoring.crowdsourcedataservice.controller;
 
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceException;
-import com.waterqualitymonitoring.crowdsourcedataservice.model.CrowdDataResponse;
-import com.waterqualitymonitoring.crowdsourcedataservice.model.Observations;
-import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataRequestDto;
-import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataResponseDto;
+import com.waterqualitymonitoring.crowdsourcedataservice.model.*;
 import com.waterqualitymonitoring.crowdsourcedataservice.service.WaterQualityService;
 import org.bson.types.Binary;
 import org.springframework.http.MediaType;
@@ -58,7 +55,7 @@ public class WaterQualityController {
     }
 
     @GetMapping("/previousReviews")
-    public CrowdDataResponse<List<WaterQualityDataResponseDto>> getPreviousReviews (@RequestParam String citizenId) throws CrowdDataSourceException {
+    public CrowdDataResponse<List<ReviewsResponseDto>> getPreviousReviews (@RequestParam String citizenId) throws CrowdDataSourceException {
         return CrowdDataResponse.success(waterQualityService.getPreviousReviews(citizenId));
     }
 }
