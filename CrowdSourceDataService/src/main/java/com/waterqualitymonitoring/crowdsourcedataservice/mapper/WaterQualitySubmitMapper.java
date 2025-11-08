@@ -20,8 +20,9 @@ public interface WaterQualitySubmitMapper {
     default WaterQualityData mapRequestToObj(WaterQualityDataRequestDto waterQualityDataRequestDto) {
         return WaterQualityData.builder()
                 .postalCode(waterQualityDataRequestDto.getPostalCode())
-                .measurements(Measurement.builder().unit("Na").value(1.00).build())
-                .observations(Observations.CLEAR)
+                .measurements(Measurement.builder().unit(waterQualityDataRequestDto.getUnit()).value(waterQualityDataRequestDto.getValue()).build())
+                .observations(waterQualityDataRequestDto.getObservations())
+                .binaries(waterQualityDataRequestDto.getBinaries())
                 .build();
     }
 
