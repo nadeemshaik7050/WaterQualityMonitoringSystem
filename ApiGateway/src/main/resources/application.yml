@@ -7,12 +7,12 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: crowdData-service
-          uri: lb://CROWD-DATA-SERVICE
+        - id: crowd-data-service
+          uri: lb://crowd-data-service
           predicates:
             - Path=/crowddata/**
         - id: reward-service
-          uri: lb://REWARD-SERVICE
+          uri: lb://reward-service
           predicates:
             - Path=/rewards/**
       globalcors:

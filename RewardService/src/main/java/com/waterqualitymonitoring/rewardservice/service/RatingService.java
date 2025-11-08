@@ -40,4 +40,8 @@ public class RatingService {
     public Integer getCountOfActiveRatings() {
         return ratingServiceHelper.getCountOfActiveRatings();
     }
+
+    public Rating getUserRating(String citizenId) throws RatingException {
+        return ratingServiceHelper.getUserRating(citizenId);
+    }
 }

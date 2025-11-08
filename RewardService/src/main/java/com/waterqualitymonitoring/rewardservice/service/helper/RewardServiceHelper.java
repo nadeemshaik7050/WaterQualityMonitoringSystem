@@ -58,7 +58,7 @@ public class RewardServiceHelper {
 
 
     private String calculateBadge(Long points) throws RewardException {
-        Rating rating=ratingRepository.findFirstByMinPointsLessThanEqualAndMaxPointsGreaterThanEqualAndIsActiveTrue(points);
+        Rating rating=ratingRepository.findFirstByMinPointsLessThanEqualAndMaxPointsGreaterThanEqualAndIsActiveTrue(points,points);
         if(rating==null){
             throw new RewardException(RewardServiceError.RATING_NOT_FOUND);
         }

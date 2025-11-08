@@ -6,11 +6,12 @@ import com.waterqualitymonitoring.crowdsourcedataservice.model.RewardResponseDto
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "RewardsFeignClient", url = "${reward.service-base-url}", fallback = RewardsFeignClientFallback.class,configuration = FeignErrorDecoderConfig.class)
+@FeignClient(name = "reward-service",url = "http://localhost:8081", fallback = RewardsFeignClientFallback.class,configuration = {FeignErrorDecoderConfig.class,FeignAuthConfig.class})
 public interface RewardsFeignClient {
 
-    @PostMapping("/addReward")
-    ResponseEntity<RewardResponseDto> callRewardService(RewardRequestDto rewardRequestDto) throws CrowdDataSourceException;
+    @PostMapping("/rewards/addReward")
+    ResponseEntity<RewardResponseDto> callRewardService(@RequestBody RewardRequestDto rewardRequestDto);
 
 }

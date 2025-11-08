@@ -15,8 +15,12 @@ public class RewardService {
         this.rewardServiceHelper = rewardServiceHelper;
     }
 
-    public RewardResponseDto rewardsCalculation(RewardRequestDto rewardRequestDto) throws RewardException {
+    public RewardResponseDto rewardsCalculation(RewardRequestDto rewardRequestDto){
         Long points = rewardServiceHelper.calculatePoints(rewardRequestDto);
-        return rewardServiceHelper.addPointsAndBadgetoUser(points,rewardRequestDto);
+        try {
+            return rewardServiceHelper.addPointsAndBadgetoUser(points,rewardRequestDto);
+        } catch (RewardException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -6,10 +6,7 @@ import com.waterqualitymonitoring.rewardservice.model.RewardResponseDto;
 import com.waterqualitymonitoring.rewardservice.service.RewardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rewards")
@@ -20,7 +17,7 @@ public class RewardController {
         this.rewardService = rewardService;
     }
     @PostMapping("/addReward")
-    public ResponseEntity<RewardResponseDto> addReward(RewardRequestDto rewardRequestDto) throws RewardException {
+    public ResponseEntity<RewardResponseDto> addReward(@RequestBody RewardRequestDto rewardRequestDto) {
         return ResponseEntity.status(HttpStatus.OK).body(rewardService.rewardsCalculation(rewardRequestDto));
     }
 }

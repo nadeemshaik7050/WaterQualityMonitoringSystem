@@ -16,5 +16,5 @@ public class RewardRequestDto {
     private String unit;
     private Double value;
     private Observations observations;
-    private List<Binary> binaries;
+    private List<byte[]> binaries;
 }

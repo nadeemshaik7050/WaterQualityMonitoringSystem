@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RewardsFeignClientFallback implements  RewardsFeignClient{
     @Override
-    public ResponseEntity<RewardResponseDto> callRewardService(RewardRequestDto rewardRequestDto) throws CrowdDataSourceException {
+    public ResponseEntity<RewardResponseDto> callRewardService(RewardRequestDto rewardRequestDto){
         return ResponseEntity.status(503).build();
     }
 }

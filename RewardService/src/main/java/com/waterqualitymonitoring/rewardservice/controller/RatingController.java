@@ -67,4 +67,9 @@ public class RatingController {
         return RewardServiceResponse.success(ratingService.getCountOfActiveRatings());
     }
 
+    @GetMapping("/getUserRating")
+    public RewardServiceResponse<Rating> getUserRatings(@RequestParam String citizenId) throws RatingException {
+        return RewardServiceResponse.success(ratingService.getUserRating(citizenId));
+    }
+
 }

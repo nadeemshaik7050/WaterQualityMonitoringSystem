@@ -1,5 +1,6 @@
 package com.waterqualitymonitoring.crowdsourcedataservice.service.helper;
 
+import com.waterqualitymonitoring.crowdsourcedataservice.entity.User;
 import com.waterqualitymonitoring.crowdsourcedataservice.entity.WaterQualitySubmitLog;
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceError;
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceException;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -68,6 +71,13 @@ public class WaterQualityServiceHelper {
     }
 
     private RewardRequestDto createRewardRequestDto(WaterQualityDataRequestDto waterQualityDataRequestDto, String submissionId) {
+        List<byte[]> binaries = null;
+        if (waterQualityDataRequestDto.getBinaries() != null) {
+            binaries = waterQualityDataRequestDto.getBinaries().stream()
+                    .filter(Objects::nonNull)
+                    .map(b -> b.getData())
+                    .collect(Collectors.toList());
+        }
         return RewardRequestDto.builder()
                 .citizenId(waterQualityDataRequestDto.getCitizenId())
                 .userName(waterQualityDataRequestDto.getUserName())
@@ -75,11 +85,17 @@ public class WaterQualityServiceHelper {
                 .unit(waterQualityDataRequestDto.getUnit())
                 .value(waterQualityDataRequestDto.getValue())
                 .observations(waterQualityDataRequestDto.getObservations())
-                .binaries(waterQualityDataRequestDto.getBinaries())
+                .binaries(binaries)
                 .build();
     }
 
     public ResponseEntity<RewardResponseDto> callRewardService(RewardRequestDto rewardRequestDto) throws CrowdDataSourceException {
         return rewardsFeignClient.callRewardService(rewardRequestDto);
+    }
+
+    public List<WaterQualityDataResponseDto> getPreviousReviews(String citizenId) {
+        List<WaterQualitySubmitLog> submitLogs=waterQualitySubmitLogRepository.findByCitizenId(citizenId);
+        List<WaterQualityDataResponseDto> waterQualityDataResponseDtos=null;
+        return waterQualityDataResponseDtos;
     }
 }

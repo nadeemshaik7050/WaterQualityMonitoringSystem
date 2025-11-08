@@ -1,11 +1,13 @@
 package com.waterqualitymonitoring.rewardservice.service.helper;
 
 import com.waterqualitymonitoring.rewardservice.entity.Rating;
+import com.waterqualitymonitoring.rewardservice.entity.User;
 import com.waterqualitymonitoring.rewardservice.exception.RatingException;
 import com.waterqualitymonitoring.rewardservice.exception.RewardServiceError;
 import com.waterqualitymonitoring.rewardservice.mapper.RatingMapper;
 import com.waterqualitymonitoring.rewardservice.model.RatingDto;
 import com.waterqualitymonitoring.rewardservice.repository.RatingRepository;
+import com.waterqualitymonitoring.rewardservice.repository.UserRepository;
 import org.bson.types.Binary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,8 +20,10 @@ import java.util.List;
 @Component
 public class RatingServiceHelper {
     private final RatingRepository ratingRepository;
-    public RatingServiceHelper(RatingRepository ratingRepository) {
+    private final UserRepository userRepository;
+    public RatingServiceHelper(RatingRepository ratingRepository, UserRepository userRepository) {
         this.ratingRepository = ratingRepository;
+        this.userRepository=userRepository;
     }
     public void validateAddRatingRequest(RatingDto ratingDto) throws RatingException {
         List<String> missingFields = new ArrayList<>();
@@ -107,5 +111,18 @@ public class RatingServiceHelper {
 
     public Integer getCountOfActiveRatings() {
         return ratingRepository.findByIsActiveTrue().size();
+    }
+
+    public Rating getUserRating(String citizenId) throws RatingException {
+        User user=userRepository.findByCitizenId(citizenId);
+        if(user==null) {
+            throw new RatingException(RewardServiceError.USER_NOT_FOUND);
+        }
+        Long points=user.getPoints();
+        Rating rating=ratingRepository.findFirstByMinPointsLessThanEqualAndMaxPointsGreaterThanEqualAndIsActiveTrue(points,points);
+        if(rating==null){
+            throw new RatingException(RewardServiceError.RATING_NOT_FOUND);
+        }
+        return rating;
     }
 }

@@ -7,6 +7,8 @@ import com.waterqualitymonitoring.crowdsourcedataservice.repository.WaterQuality
 import com.waterqualitymonitoring.crowdsourcedataservice.service.helper.WaterQualityServiceHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class WaterQualityService {
     private final WaterQualityServiceHelper waterQualityServiceHelper;
@@ -20,7 +22,7 @@ public class WaterQualityService {
         return waterQualityServiceHelper.doSubmission(waterQualityDataRequestDto);
     }
 
-    public WaterQualityDataResponseDto getPreviousReviews(String citizenId) {
-        return null;
+    public List<WaterQualityDataResponseDto> getPreviousReviews(String citizenId) {
+        return waterQualityServiceHelper.getPreviousReviews(citizenId);
     }
 }
