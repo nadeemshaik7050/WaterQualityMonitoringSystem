@@ -20,7 +20,8 @@ spring:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
-              - http://localhost:3000        # match your React origin exactly
+              - http://localhost:3000
+              - http://localhost:3001
             allowedMethods:
               - GET
               - POST
