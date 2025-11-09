@@ -2,12 +2,20 @@ import React from "react";
 import { FiLogOut, FiMail, FiUser } from "react-icons/fi";
 import KeycloakService from "@/lib/keycloak/service";
 import { useAuth } from "@/lib/keycloak/AuthProvider";
+import { useQuery } from "react-query";
+import { userApi } from "@/api/user";
 
 const UserProfile = () => {
   const { user } = useAuth();
-  // console.log(user)
-  // console.log(user?.roles[4])
 
+  // console.log(user?.userId+"----user?.userId________")
+
+    const { data: currentUserDetails, isLoading } = useQuery({
+      queryKey: ["user", user?.userId],
+      queryFn: () => userApi.getById(user?.userId),
+    });
+  
+  // console.log(currentUserDetails+"+==============currentUserDetails")
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -64,7 +72,8 @@ const UserProfile = () => {
           <div className="bg-blue-50 dark:bg-gray-700/50 rounded-xl py-3 shadow-inner">
             <p className="text-xs text-gray-500 dark:text-gray-400">Role</p>
             <p className="text-base font-semibold text-blue-700 dark:text-blue-300">
-              {user?.roles[3] || "NA"}
+              {/* {user?.roles[3] || "NA"} */}
+              {currentUserDetails?.role}
             </p>
           </div>
         </div>

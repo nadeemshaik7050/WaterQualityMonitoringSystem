@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext } from "react";
 import { useQuery } from "react-query";
 import { userApi } from "@/api/user";
 import { useAuth } from "@/lib/keycloak/AuthProvider";
@@ -6,18 +6,22 @@ import { useAuth } from "@/lib/keycloak/AuthProvider";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const { user } = useAuth();
-  const [currentUserDetails, setCurrentUserDetails] = useState(null);
+  const { user } = useAuth(); // From Keycloak
+  const userId = user?.userId || user?.sub || user?.id || user?.citizenId;
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["userDetails", user?.userId],
-    queryFn: () => userApi.getById(user?.userId),
-    enabled: !!user?.userId,
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["userDetails", userId],
+    queryFn: () => userApi.getById(userId),
+    enabled: !!userId, //  prevent API call until userId is available
   });
 
-  useEffect(() => {
-    if (data) setCurrentUserDetails(data);
-  }, [data]);
+  const currentUserDetails = data?.result ?? null;
+
+  // console.log(" Current User Details:", currentUserDetails);
 
   return (
     <UserContext.Provider value={{ currentUserDetails, isLoading, isError }}>

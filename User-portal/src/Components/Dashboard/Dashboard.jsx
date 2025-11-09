@@ -10,7 +10,7 @@ import ReviewsTable from "./ReviewsTable";
 const Dashboard = () => {
   const { user } = useAuth();
 
-  console.log(user.userId + "user");
+ // console.log(user.userId + "user");
 
   const rewardData = {
     badge: "Silver",

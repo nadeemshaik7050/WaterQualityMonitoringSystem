@@ -9,7 +9,7 @@ const UserCard = ({ user,currentUserDetails }) => {
   //   queryFn: () => userApi.getById(id),
   // });
 
-  console.log(currentUserDetails+"currentUserDetails")
+  //console.log(currentUserDetails+"currentUserDetails")
 
   const navigate = useNavigate()
   return (
