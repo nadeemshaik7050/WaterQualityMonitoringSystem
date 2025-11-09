@@ -48,7 +48,7 @@ export default function Dashboard() {
     },
     {
       title: "Max Points User",
-      value: getMaxPointsUsers?.result?.[0]?.firstName ?? 0,
+      value: getMaxPointsUsers?.result?.[0]?.userName ?? 0,
       subValue: getMaxPointsUsers?.maxPoints ?? 0,
       icon: Crown,
       color: "bg-purple-600",

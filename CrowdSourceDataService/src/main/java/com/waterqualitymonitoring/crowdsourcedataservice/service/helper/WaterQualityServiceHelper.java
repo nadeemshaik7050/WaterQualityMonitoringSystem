@@ -1,14 +1,17 @@
 package com.waterqualitymonitoring.crowdsourcedataservice.service.helper;
 
 import com.waterqualitymonitoring.crowdsourcedataservice.entity.User;
+import com.waterqualitymonitoring.crowdsourcedataservice.entity.WaterQualityData;
 import com.waterqualitymonitoring.crowdsourcedataservice.entity.WaterQualitySubmitLog;
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceError;
 import com.waterqualitymonitoring.crowdsourcedataservice.exception.CrowdDataSourceException;
 import com.waterqualitymonitoring.crowdsourcedataservice.feignclient.RewardsFeignClient;
 import com.waterqualitymonitoring.crowdsourcedataservice.mapper.WaterQualitySubmitMapper;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.*;
+import com.waterqualitymonitoring.crowdsourcedataservice.repository.WaterQualityDataRepository;
 import com.waterqualitymonitoring.crowdsourcedataservice.repository.WaterQualitySubmitLogRepository;
 import com.waterqualitymonitoring.crowdsourcedataservice.utility.WQMUtility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -21,15 +24,13 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class WaterQualityServiceHelper {
 
+    private final WaterQualityDataRepository waterQualityDataRepository;
     private final WaterQualitySubmitLogRepository waterQualitySubmitLogRepository;
     private final RewardsFeignClient rewardsFeignClient;
 
-    public WaterQualityServiceHelper(WaterQualitySubmitLogRepository waterQualitySubmitLogRepository, RewardsFeignClient rewardsFeignClient) {
-        this.waterQualitySubmitLogRepository = waterQualitySubmitLogRepository;
-        this.rewardsFeignClient = rewardsFeignClient;
-    }
 
     public void validateRequest(WaterQualityDataRequestDto waterQualityDataRequestDto) throws CrowdDataSourceException {
         List<String> missingFields = new ArrayList<>();
@@ -52,19 +53,33 @@ public class WaterQualityServiceHelper {
     }
 
     public WaterQualityDataResponseDto doSubmission(WaterQualityDataRequestDto waterQualityDataRequestDto) throws CrowdDataSourceException {
-        WaterQualitySubmitLog waterQualitySubmitLog= WaterQualitySubmitMapper.INSTANCE.toSubmitLog(waterQualityDataRequestDto);
+        WaterQualityData waterQualityData= WaterQualitySubmitMapper.INSTANCE.toWaterQualityData(waterQualityDataRequestDto);
+        String waterQualityDataId = waterQualityDataRepository.save(waterQualityData).getId();
         String submissionId= WQMUtility.generateSubmissionID();
+
+        WaterQualitySubmitLog waterQualitySubmitLog= WaterQualitySubmitMapper.INSTANCE.toSubmitLog(waterQualityDataRequestDto);
+
+        waterQualitySubmitLog.setWaterQualityDataId(waterQualityDataId);
         waterQualitySubmitLog.setSubmissionId(submissionId);
+        waterQualitySubmitLog.setSubmissionDate(LocalDate.now());
+
         RewardRequestDto rewardRequestDto=createRewardRequestDto(waterQualityDataRequestDto,submissionId);
         ResponseEntity<RewardResponseDto> rewardResponse=callRewardService(rewardRequestDto);
         if (!rewardResponse.getStatusCode().is2xxSuccessful()){
             log.error("reward service call failed for submissionId: {}",submissionId);
             throw new CrowdDataSourceException(CrowdDataSourceError.REWARD_SERVICE_ERROR);
         }
+
+        RewardResponseDto rewardResponseDto=rewardResponse.getBody();
+
+        waterQualitySubmitLog.setStatus(rewardResponseDto.getStatus());
+        waterQualitySubmitLog.setRewardsPointGiven(rewardResponseDto.getCurrentPoints());
+        waterQualitySubmitLog.setTotalRewardsPoint(rewardResponseDto.getTotalPoints());
+
         waterQualitySubmitLogRepository.save(waterQualitySubmitLog);
         return WaterQualityDataResponseDto.builder()
                 .submissionId(submissionId)
-                .receiptNumber("ABCDE")
+                .message(rewardResponseDto.getMessage())
                 .build();
     }
 
@@ -93,8 +108,20 @@ public class WaterQualityServiceHelper {
 
     public List<ReviewsResponseDto> getPreviousReviews(String citizenId) {
         List<WaterQualitySubmitLog> submitLogs=waterQualitySubmitLogRepository.findByCitizenId(citizenId);
-        return submitLogs.stream()
-                .map(WaterQualitySubmitMapper.INSTANCE::toReviewsResponseDto)
-                .toList();
+        List<ReviewsResponseDto> reviewsResponseDtos=new ArrayList<>();
+        for (WaterQualitySubmitLog log : submitLogs) {
+            WaterQualityData waterQualityData = waterQualityDataRepository.findById(log.getWaterQualityDataId()).orElse(null);
+            if (waterQualityData != null) {
+                ReviewsResponseDto reviewsResponseDto = ReviewsResponseDto.builder()
+                        .waterQualityData(waterQualityData)
+                        .reviewDate(log.getSubmissionDate())
+                        .pointsAwarded(log.getRewardsPointGiven())
+                        .submissionId(log.getSubmissionId())
+                        .citizenId(log.getCitizenId())
+                        .build();
+                reviewsResponseDtos.add(reviewsResponseDto);
+            }
+        }
+        return reviewsResponseDtos;
     }
 }

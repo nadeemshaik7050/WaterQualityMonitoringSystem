@@ -1,4 +1,4 @@
-package com.waterqualitymonitoring.crowdsourcedataservice.model;
+package com.waterqualitymonitoring.crowdsourcedataservice.entity;
 
 public enum Observations {
     CLEAR,

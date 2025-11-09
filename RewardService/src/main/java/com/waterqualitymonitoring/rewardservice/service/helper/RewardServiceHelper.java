@@ -49,8 +49,7 @@ public class RewardServiceHelper {
         userRepository.save(user);
         return RewardResponseDto.builder()
                 .totalPoints(pointsAfter)
-                .badge(user.getBadge())
-                .pointsEarned(points)
+                .currentPoints(points)
                 .message("Rewards added successfully")
                 .status("Success")
                 .build();

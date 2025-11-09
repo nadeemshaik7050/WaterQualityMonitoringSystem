@@ -2,8 +2,7 @@ package com.waterqualitymonitoring.crowdsourcedataservice.mapper;
 
 import com.waterqualitymonitoring.crowdsourcedataservice.entity.WaterQualityData;
 import com.waterqualitymonitoring.crowdsourcedataservice.entity.WaterQualitySubmitLog;
-import com.waterqualitymonitoring.crowdsourcedataservice.model.Measurement;
-import com.waterqualitymonitoring.crowdsourcedataservice.model.Observations;
+import com.waterqualitymonitoring.crowdsourcedataservice.entity.Measurement;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.ReviewsResponseDto;
 import com.waterqualitymonitoring.crowdsourcedataservice.model.WaterQualityDataRequestDto;
 import org.mapstruct.*;
@@ -14,8 +13,11 @@ public interface WaterQualitySubmitMapper {
 
     WaterQualitySubmitMapper INSTANCE = Mappers.getMapper(WaterQualitySubmitMapper.class);
 
-    @Mapping(target = "waterQualityData",expression = "java(mapRequestToObj(waterQualityDataRequestDto))")
     WaterQualitySubmitLog toSubmitLog(WaterQualityDataRequestDto waterQualityDataRequestDto);
+
+    default WaterQualityData toWaterQualityData(WaterQualityDataRequestDto waterQualityDataRequestDto){
+        return mapRequestToObj(waterQualityDataRequestDto);
+    }
 
     default WaterQualityData mapRequestToObj(WaterQualityDataRequestDto waterQualityDataRequestDto) {
         return WaterQualityData.builder()
@@ -25,8 +27,4 @@ public interface WaterQualitySubmitMapper {
                 .binaries(waterQualityDataRequestDto.getBinaries())
                 .build();
     }
-
-    @Mapping(source = "rewardsPointGiven", target = "pointsAwarded")
-    @Mapping(source = "submitTime", target = "reviewDate", dateFormat = "yyyy-MM-dd")
-    ReviewsResponseDto toReviewsResponseDto(WaterQualitySubmitLog submitLog);
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class RewardResponseDto {
+    private Long currentPoints;
     private Long totalPoints;
     private String status;
     private String message;

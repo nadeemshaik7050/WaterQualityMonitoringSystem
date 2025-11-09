@@ -1,8 +1,6 @@
-package com.waterqualitymonitoring.crowdsourcedataservice.model;
+package com.waterqualitymonitoring.crowdsourcedataservice.entity;
 
-import com.waterqualitymonitoring.crowdsourcedataservice.entity.AbstractEntity;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -11,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Measurement extends AbstractEntity {
+public class Measurement{
     private String unit;
     private Double value;
 }

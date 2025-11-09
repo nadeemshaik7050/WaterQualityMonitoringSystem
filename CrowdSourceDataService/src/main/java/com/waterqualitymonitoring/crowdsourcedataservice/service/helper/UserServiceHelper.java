@@ -144,7 +144,7 @@ public class UserServiceHelper {
         if (existingUser != null) {
             existingUser.setFirstName(userRequestDto.getFirstName());
             existingUser.setLastName(userRequestDto.getLastName());
-            existingUser.setEmail(userRequestDto.getEmail());
+            existingUser.setGender(userRequestDto.getGender());
             updateUserInKeycloak(existingUser, userRequestDto);
             userRepository.save(existingUser);
             return;

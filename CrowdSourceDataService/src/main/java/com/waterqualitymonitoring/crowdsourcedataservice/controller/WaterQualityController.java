@@ -27,31 +27,10 @@ public class WaterQualityController {
                                                                                   @RequestParam("observations") String observations,
                                                                                   @RequestParam("citizenId") String citizenId,
                                                                                   @RequestParam("userName") String userName,
-                                                                                  @RequestPart("binaries") List<MultipartFile> images) throws CrowdDataSourceException {
-        WaterQualityDataRequestDto waterQualityDataRequestDto = createWaterQualityDataRequestDto(postalCode, unit, value, observations, citizenId, userName, images);
+                                                                                  @RequestPart(name="binaries",required = false) List<MultipartFile> images) throws CrowdDataSourceException {
+        List<MultipartFile> safeImages = (images == null) ? java.util.Collections.emptyList() : images;
+        WaterQualityDataRequestDto waterQualityDataRequestDto = waterQualityService.createWaterQualityDataRequestDto(postalCode, unit, value, observations, citizenId, userName, safeImages);
         return CrowdDataResponse.success(waterQualityService.doSubmission(waterQualityDataRequestDto));
-    }
-
-    private WaterQualityDataRequestDto createWaterQualityDataRequestDto(String postalCode, String unit, String value, String observations, String citizenId, String userName, List<MultipartFile> images) {
-            return WaterQualityDataRequestDto.builder()
-                    .postalCode(postalCode)
-                    .unit(unit)
-                    .value(Double.parseDouble(value))
-                    .observations(Observations.valueOf(observations))
-                    .citizenId(citizenId)
-                    .userName(userName)
-                    .binaries(convertMultipartFilesToBinaryList(images))
-                    .build();
-    }
-
-    private List<Binary> convertMultipartFilesToBinaryList(List<MultipartFile> images) {
-        return images.stream().map(file -> {
-            try {
-                return new Binary(file.getBytes());
-            } catch (Exception e) {
-                throw new RuntimeException("Error converting file to binary", e);
-            }
-        }).toList();
     }
 
     @GetMapping("/previousReviews")

@@ -1,5 +1,6 @@
 package com.waterqualitymonitoring.crowdsourcedataservice.model;
 
+import com.waterqualitymonitoring.crowdsourcedataservice.entity.Observations;
 import lombok.Builder;
 import lombok.Data;
 import org.bson.types.Binary;

@@ -10,6 +10,11 @@ import org.springframework.stereotype.Component;
 public class RewardsFeignClientFallback implements  RewardsFeignClient{
     @Override
     public ResponseEntity<RewardResponseDto> callRewardService(RewardRequestDto rewardRequestDto){
-        return ResponseEntity.status(503).build();
+        return ResponseEntity.status(500)
+                .body(RewardResponseDto.builder()
+                        .message("Reward Service is currently unavailable Or Encountered Some error. Please try again later.")
+                        .status("FAILED")
+                        .currentPoints(0L)
+                        .build());
     }
 }

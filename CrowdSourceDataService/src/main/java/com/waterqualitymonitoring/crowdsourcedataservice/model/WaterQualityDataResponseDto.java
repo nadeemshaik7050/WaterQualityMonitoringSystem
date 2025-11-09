@@ -8,8 +8,6 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class WaterQualityDataResponseDto {
-    //Unique receipt number for Submission
-    private String receiptNumber;
     //Unique identifier of Submission
     private String submissionId;
     //failure message, if any
