@@ -12,16 +12,18 @@ spring:
           issuer-uri: http://localhost:8080/realms/WaterQualityMonitoring
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: ${IMAGE_MAX_FILE_SIZE}
+      max-request-size: ${IMAGE_MAX_REQUEST_SIZE}
 server:
-  port: 8086
+  port: ${SERVER_PORT}
+api-gateway:
+  url: ${GATEWAY_URL}
 
 keycloak:
   server-url: http://localhost:8080
   realm: WaterQualityMonitoring
   client-id: main-service
-  client-secret: 47uEs7i2kgUtVH4ZbMYBoR13jWW4HVJ6
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
 
 feign:
   httpclient:
