@@ -1,4 +1,4 @@
-# 🚀 Quick Start Guide
+#  Quick Start Guide
 
 ## Water Quality Admin Portal
 
@@ -50,7 +50,7 @@
    http://localhost:3000
    ```
 
-### 🎯 What You'll See
+###  What You'll See
 
 #### Dashboard (/)
 - Overview statistics
@@ -66,16 +66,56 @@
 - List of all rewards with pagination
 - Search functionality
 - Create, View, Edit, Delete, Activate/Deactivate rewards
+## Features
 
-### 📊 Mock Data
+### Dashboard
+- Displays **key statistics** for users and rewards.
+- Provides **quick actions** to:
+  - Add users
+  - Edit or delete users
+  - Add and manage rewards
+- Includes **interactive charts**:
+  - Points distribution
+  - Male vs Female user statistics
+  - Reward-level distribution
+- Shows **quick summaries** for:
+  - Total Users
+  - Total Rewards
+  - Average Points
 
-The application uses mock data by default:
-- **30 sample users** with realistic information
-- **20 sample rewards** across different levels
-- Pagination works (10 items per page)
-- Search functionality is enabled
+### User Management
+- View all users in a paginated table.
+- **Search users** by name, ID, or email.
+- **Create new users** with proper validation.
+- **Edit user details**.
+- **Deactivate or reactivate** users.
+- Delete users with confirmation.
+- View detailed **user profiles** and stats.
 
-### 🔐 Authentication
+### Reward Management
+- View all rewards with pagination and search.
+- **Create new rewards** with title, image, min and max points, and description.
+- **Edit existing rewards** and update details.
+- **Deactivate or reactivate** rewards.
+- Delete rewards with confirmation.
+- View reward badges and levels.
+- Manage reward images and configurations.
+
+### Data & Visualization
+- Paginated and searchable tables for users and rewards.
+- Visual dashboards for gender and points analytics.
+- Charts displaying user distribution, performance, and achievements.
+
+### UI/UX
+- Fully responsive (mobile, tablet, and desktop).
+- Built with **Tailwind CSS** for modern and clean design.
+- Intuitive navigation using a **sidebar and top navbar**.
+- Real-time notifications with **react-hot-toast**.
+- Loading, error, and empty states for a smooth user experience.
+
+---
+
+###  Authentication
 
 Current setup uses Keycloak with 'check-sso' mode:
 - Routes are visible without full authentication
@@ -100,7 +140,7 @@ npm run preview
 npm run lint
 ```
 
-### 📂 Project Structure
+###  Project Structure
 
 ```
 src/
@@ -118,7 +158,7 @@ src/
 └── main.jsx        # Entry point
 ```
 
-### 🎨 Key Features Implemented
+###  Key Features Implemented
 
    **User Management**
 - Create user with validation
@@ -186,7 +226,7 @@ Tested and working on:
 - Safari 17+
 - Edge 120+
 
-### 🎯 Next Steps
+###  Next Steps
 
 1. **Connect Real API:**
    - Update API endpoints in `src/api/users.js` and `src/api/rewards.js`
@@ -198,23 +238,3 @@ Tested and working on:
    - Export data to CSV/PDF
    - Advanced filtering
    - Analytics dashboard
-
-3. **Production Deployment:**
-   - Run `npm run build`
-   - Deploy `dist/` folder to your hosting service
-
-### 💡 Tips
-
-- Use the search bar for quick filtering
-- Click on table rows for more actions
-- All forms have validation
-- Changes are instant (mock data simulates API)
-- Responsive design works on all devices
-
-### 📧 Need Help?
-
-Check the main README.md for detailed documentation.
-
----
-
-**Happy coding! 🎉**
