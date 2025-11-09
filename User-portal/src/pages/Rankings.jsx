@@ -19,7 +19,7 @@ const Rankings = () => {
       rank: index + 1,
       username: user.userName || "NA",
       points: user.totalPoints ?? 0,
-      rewards: user.numberOfReviewsGiven ?? 0,
+      numberOfReviewsGiven: user.numberOfReviewsGiven ?? 0,
     })) || [];
 
   if (isLoading)

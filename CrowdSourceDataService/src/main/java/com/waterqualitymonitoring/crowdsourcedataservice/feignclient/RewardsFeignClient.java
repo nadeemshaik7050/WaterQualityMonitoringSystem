@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "reward-service",url = "http://localhost:8081", fallback = RewardsFeignClientFallback.class,configuration = {FeignErrorDecoderConfig.class,FeignAuthConfig.class})
+@FeignClient(name = "reward-service",url = "${api-gateway.url}", fallback = RewardsFeignClientFallback.class,configuration = {FeignErrorDecoderConfig.class,FeignAuthConfig.class})
 public interface RewardsFeignClient {
 
     @PostMapping("/rewards/addReward")
