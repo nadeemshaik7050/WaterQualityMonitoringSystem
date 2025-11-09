@@ -16,7 +16,7 @@ const getKeycloak = () => {
 };
 
 export const initKeycloak = async (onAuthenticated) => {
-  // 🚫 Prevent reinitialization
+  //  Prevent reinitialization
   if (isInitialized && keycloakInstance) {
     console.log('Keycloak already initialized');
     const authenticated = keycloakInstance.authenticated || false;

@@ -1,40 +1,41 @@
-#!/bin/bash
+# Water Quality User Portal - Installation Guide
 
-echo "🌊 Water Quality Admin Portal - Installation Script"
-echo "=================================================="
-echo ""
+## Prerequisites
+- Node.js 18+ installed
+- npm or yarn package manager
 
-# Check if Node.js is installed
-if ! command -v node &> /dev/null; then
-    echo "❌ Node.js is not installed. Please install Node.js 18+ first."
-    exit 1
-fi
+## Installation Steps
 
-echo "   Node.js version: $(node -v)"
-echo ""
+1. **Navigate to project directory**
+```bash
+cd /path/to/your/project/ADMIN-PORTAL
 
-# Install dependencies
-echo "📦 Installing dependencies..."
+
+## Install dependencies
 npm install
 
-# Install additional packages
-echo "📦 Installing additional packages..."
-npm install react-router-dom @tanstack/react-query axios keycloak-js react-hook-form lucide-react
-npm install -D tailwindcss postcss autoprefixer
+## Add your keycloack url's, realm name and client ids in keycloack utils and config.js
 
-# Create .env file if it doesn't exist
-if [ ! -f .env ]; then
-    echo "📝 Creating .env file..."
-    cp .env.example .env
-    echo "⚠️  Please update .env with your Keycloak configuration"
-else
-    echo "   .env file already exists"
-fi
 
-echo ""
-echo "   Installation complete!"
-echo ""
-echo "🚀 To start the development server, run:"
-echo "   npm run dev"
-echo ""
-echo "📖 For more information, check QUICKSTART.md"
+# Start development server
+npm run dev
+
+# Build production version
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run linter
+npm run lint
+
+src/
+├── api/            # API service calls
+├── components/     # Reusable UI components
+├── context/        # User and Auth context
+├── hooks/          # Custom hooks
+├── lib/            # Keycloak configuration
+├── pages/          # Route pages: Dashboard, MakeReview, Profile, Rankings
+├── App.jsx         # App routing
+└── main.jsx        # Entry point
+
