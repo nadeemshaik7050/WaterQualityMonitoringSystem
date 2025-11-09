@@ -218,7 +218,7 @@ npm install
 - Ensure Keycloak server is accessible
 - Verify client ID and realm settings
 
-### 📱 Browser Compatibility
+###  Browser Compatibility
 
 Tested and working on:
 - Chrome 120+
