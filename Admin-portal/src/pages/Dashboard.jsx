@@ -1,13 +1,17 @@
-import { Link } from 'react-router-dom';
-import { Users, Award, Activity, TrendingUp, Crown } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Users, Award, Crown } from 'lucide-react';
 import RewardsBarChart from '../components/global/RewardsBarChart';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { userApi } from '../api/users';
 import { rewardApi } from '../api/rewards';
 import { GenderBarChart } from '../components/global/GenderBarChart';
+import toast from 'react-hot-toast';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
+  // ✅ Queries
   const { data: userCount, isLoading } = useQuery({
     queryKey: ["userCount"],
     queryFn: userApi.getCount,
@@ -28,31 +32,55 @@ export default function Dashboard() {
     queryFn: userApi.getGenderCount,
   });
 
+  //  Extract max points user info safely
+  const topUser = getMaxPointsUsers?.result?.[0];
+  const topUserId = topUser?.citizenId;
 
-  console.log("getMaxPointsUsers" + getMaxPointsUsers)
+  //  Function to handle tile click
+  const handleMaxUserClick = async () => {
+    if (!topUserId) {
+      toast.error("No top user data found.");
+      return;
+    }
 
+    try {
+      // Pre-fetch user details using React Query
+      await queryClient.fetchQuery({
+        queryKey: ["userById", topUserId],
+        queryFn: () => userApi.getById(topUserId),
+      });
+
+      // Navigate to that user's details page
+      navigate(`/users/${topUserId}`);
+    } catch (error) {
+      toast.error("Failed to fetch user details.");
+      console.error(error);
+    }
+  };
+
+  //  Stats cards
   const stats = [
     {
       title: "Total Users",
       value: isLoading ? "..." : userCount ?? 0,
       icon: Users,
       color: "bg-blue-500",
-      link: "/users",
+      onClick: () => navigate("/users"),
     },
     {
       title: "Total Rewards",
       value: rewardCount ?? 0,
       icon: Award,
       color: "bg-green-500",
-      link: "/rewards",
+      onClick: () => navigate("/rewards"),
     },
     {
       title: "Max Points User",
-      value: getMaxPointsUsers?.result?.[0]?.userName ?? 0,
-      subValue: getMaxPointsUsers?.maxPoints ?? 0,
+      value: topUser?.userName ?? "NA",
+      subValue: topUser?.totalPoints ?? 0,
       icon: Crown,
       color: "bg-purple-600",
-      link: "/rewards",
+      onClick: handleMaxUserClick, // 👈 integrated
     },
     {
       title: "Gender Distribution",
@@ -60,25 +88,26 @@ export default function Dashboard() {
       subValue: `Female: ${genderCount?.female ?? 0}`,
       icon: Users,
       color: "bg-yellow-700",
-      link: "/users",
-    }
+      onClick: () => navigate("/users"),
+    },
   ];
 
-
+  // UI rendering
   return (
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
         <p className="text-gray-600">Citizen Water Quality Monitoring Platform</p>
       </div>
+
+      {/* Stats cards grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
-          <Link
+          <div
             key={index}
-            to={stat.link}
-            className="bg-slate-100 rounded-lg shadow p-6 hover:bg-blue-100 hover:shadow-md transition-all"
+            onClick={stat.onClick}
+            className="cursor-pointer bg-slate-100 rounded-lg shadow p-6 hover:bg-blue-100 hover:shadow-md transition-all"
           >
-            {/* Top row: icon + title */}
             <div className="flex items-center gap-3 mb-3">
               <div className={`${stat.color} p-3 rounded-lg text-white flex-shrink-0`}>
                 <stat.icon size={26} />
@@ -86,7 +115,6 @@ export default function Dashboard() {
               <h3 className="text-gray-700 text-lg font-semibold">{stat.title}</h3>
             </div>
 
-            {/* Bottom section: value, subValue, or chart */}
             {stat.title !== "Gender Distribution" ? (
               <>
                 <p className="text-4xl font-bold text-gray-900">{stat.value}</p>
@@ -100,16 +128,13 @@ export default function Dashboard() {
                 />
               </div>
             )}
-          </Link>
+          </div>
         ))}
       </div>
 
-
-
-
-      {/* Two-column layout: left for Quick Actions, right for Chart */}
+      {/* Bottom section: actions + chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Section */}
+        {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow p-6 border">
           <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
           <div className="space-y-3">
@@ -140,10 +165,9 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Right Section */}
+        {/* Rewards chart */}
         <RewardsBarChart />
       </div>
     </div>
   );
-
 }

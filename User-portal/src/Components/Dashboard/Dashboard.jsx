@@ -1,11 +1,11 @@
 import React from "react";
 import UserCard from "./UserCard";
 import BadgesCard from "./BadgesCard";
-import Table from "./Table";
 import { useAuth } from "@/lib/keycloak/AuthProvider";
 import { useQuery } from "react-query";
 import { rankingsApi } from "@/api/rankings";
 import { userApi } from "@/api/user";
+import ReviewsTable from "./ReviewsTable";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -19,7 +19,7 @@ const Dashboard = () => {
     badgeImage: "https://cdn-icons-png.flaticon.com/512/1040/1040230.png", // temporary sample image
   };
 
-  const { data: reviewsData } = useQuery({
+  const { data: reviewsData,isLoading:reviewsisLoading} = useQuery({
     queryKey: ["previousReviews", user?.userId],
     queryFn: () => rankingsApi.getPreviousReviews(user?.userId),
     // enabled: !!userInfoFromKeyCloak?.sub,
@@ -29,19 +29,6 @@ const Dashboard = () => {
     queryKey: ["user", user?.userId],
     queryFn: () => userApi.getById(user?.userId),
   });
-
-  const tableDataReviews =
-    reviewsData?.result?.map((item) => ({
-      // SubmissionID: item.submissionId,
-      PostalCode: item.waterQualityData?.postalCode ?? "N/A",
-      Value: item.waterQualityData?.measurements?.value ?? "N/A",
-      Unit: item.waterQualityData?.measurements?.unit ?? "N/A",
-      Observations: item.waterQualityData?.observations ?? "N/A",
-      pointsEarned: item.pointsAwarded ?? "N/A",
-      CreatedOn: new Date(
-        item.waterQualityData?.creationDate
-      ).toLocaleDateString(),
-    })) ?? [];
 
   return (
     <div className="p-6 bg-gradient-to-br to-blue-50 from-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
@@ -74,11 +61,7 @@ const Dashboard = () => {
           </span>
         </h1>
       </div>
-      <Table
-        data={tableDataReviews}
-        title="Previous Water Quality Reviews"
-        keyType="reviews"
-      />
+      <ReviewsTable reviewsData={reviewsData} reviewsisLoading={reviewsisLoading}/>
     </div>
   );
 };

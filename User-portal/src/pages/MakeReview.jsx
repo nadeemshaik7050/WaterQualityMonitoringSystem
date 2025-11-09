@@ -7,6 +7,7 @@ import { Droplets, ClipboardCheck, Upload } from "lucide-react";
 import { useAuth } from "@/lib/keycloak/AuthProvider";
 import { rankingsApi } from "@/api/rankings";
 import toast from "react-hot-toast";
+import { OBSERVATIONS } from "@/constants/Observations";
 
 const reviewSchema = z.object({
   waterBody: z.string().nonempty("Enter the water body"),
@@ -30,46 +31,72 @@ const MakeReview = () => {
   });
 
   console.log(user.username+"user")
+const onSubmit = async (data) => {
+  try {
+    const formData = new FormData();
 
-  const onSubmit = async (data) => {
-    try {
-      const formData = new FormData();
+    // Append files
+    images.forEach((img) => {
+      formData.append("binaries", img.file);
+    });
 
-      //   Append files (as 'binaries')
-      images.forEach((img) => {
-        formData.append("binaries", img.file);
-      });
+    // Append required backend fields
+    formData.append("postalCode", data.postalCode);
+    formData.append("unit", data.measurementType);
+    formData.append("value", data.measurement);
+    formData.append("observations", data.observations);
+    formData.append("citizenId", user?.userId ?? "unknown");
+    formData.append("userName", user?.username ?? "guest");
 
-      //   Append required backend fields
-      formData.append("postalCode", data.postalCode);
-      formData.append("unit", data.measurementType);
-      formData.append("value", data.measurement);
-      formData.append("observations", data.observations.toUpperCase());
-      formData.append("citizenId", user?.userId ?? "unknown");
-      formData.append("userName", user?.username ?? "guest");
+    toast.loading("Submitting water quality data...");
 
-      toast.loading("Submitting water quality data...");
+    const response = await rankingsApi.submitWaterQuality(formData, token);
 
-      const response = await rankingsApi.submitWaterQuality(formData, token);
+    toast.dismiss();
 
-      toast.dismiss();
-
-      if (response?.result?.receiptNumber) {
-        toast.success(`  Submitted! Receipt: ${response.result.receiptNumber}`);
-      } else {
-        toast.success("  Review submitted successfully!");
-      }
-
-      console.log("API Response 👉", response);
-
-      reset();
-      setImages([]);
-    } catch (error) {
-      toast.dismiss();
-      toast.error("❌ Failed to submit review");
-      console.error("Submission error:", error);
+    if (response?.result?.submissionId) {
+      toast.success("Review submitted successfully!");
+    } else if (response?.result?.receiptNumber) {
+      toast.success(`Submitted! Receipt: ${response.result.receiptNumber}`);
+    } else {
+      toast.success("Data submitted successfully!");
     }
-  };
+
+    console.log("API Response 👉", response);
+
+    reset();
+    setImages([]);
+  } catch (error) {
+    toast.dismiss();
+
+    // Handle known API error types
+    if (error.response) {
+      const status = error.response.status;
+      const detail = error.response.data?.detail || error.message;
+
+      if (status === 413) {
+        toast.error("⚠️ File size too large. Please upload smaller images.");
+      } else if (status >= 500) {
+        toast.error(" Server error. Please try again later.");
+      } else if (status === 401) {
+        toast.error(" Unauthorized. Please log in again.");
+      } else if (status === 400) {
+        toast.error(` Invalid request: ${detail}`);
+      } else {
+        toast.error(` Something went wrong: ${detail}`);
+      }
+    } else if (error.request) {
+      // Network / no response
+      toast.error("🌐 Network error. Please check your internet connection.");
+    } else {
+      // Anything else
+      toast.error(" Unexpected error occurred.");
+    }
+
+    console.error("Submission error:", error);
+  }
+};
+
 
   return (
     <div className="max-w-lg mx-auto mt-10 bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700 transition-all duration-300">
@@ -160,19 +187,17 @@ const MakeReview = () => {
           <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
             Observations
           </label>
-          <select
+        <select
             {...register("observations")}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm
-              dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+      dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
           >
             <option value="">Select Observation</option>
-            <option value="CLEAR">Clear</option>
-            <option value="CLOUDY">Cloudy</option>
-            <option value="MURKY">Murky</option>
-            <option value="FOAMY">Foamy</option>
-            <option value="OILY">Oily</option>
-            <option value="DISCOLOURED">Discoloured</option>
-            <option value="PRESENCE OF ODOUR">Presence of Odour</option>
+            {OBSERVATIONS.map((obs) => (
+              <option key={obs.value} value={obs.value}>
+                {obs.label}
+              </option>
+            ))}
           </select>
           {errors.observations && (
             <p className="text-red-500 text-sm mt-1">{errors.observations.message}</p>

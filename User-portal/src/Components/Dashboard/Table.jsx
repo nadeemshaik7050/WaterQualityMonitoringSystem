@@ -1,7 +1,43 @@
-const Table = ({ data, title, keyType, currentUserName }) => {
+import React, { useState } from "react";
+import { FaUser, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { GiLaurelCrown } from "react-icons/gi";
+
+const Table = ({ data, title, currentUserName }) => {
   if (!data || data.length === 0) return null;
 
-  const isRankings = keyType === "rankings";
+  const currentUserStyle =
+    "bg-yellow-300 text-black font-semibold shadow-inner shadow-yellow-600 border border-yellow-400";
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5;
+  const totalPages = Math.ceil(data.length / rowsPerPage);
+  const paginatedData = data.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  const handlePrev = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+  const handleNext = () =>
+    currentPage < totalPages && setCurrentPage(currentPage + 1);
+
+  // Rank icon logic: prefer row.rank, else computed rank
+  const getRankIcon = (rank) => {
+    switch (rank) {
+      case 1:
+        return <GiLaurelCrown className="text-yellow-400 text-lg mx-auto" title="1st" />;
+      case 2:
+        return <GiLaurelCrown className="text-gray-400 text-lg mx-auto" title="2nd" />;
+      case 3:
+        return <GiLaurelCrown className="text-amber-700 text-lg mx-auto" title="3rd" />;
+      default:
+        return <span className="font-semibold">{rank}</span>;
+    }
+  };
+
+  // Build list of column keys but exclude 'rank' (case-insensitive)
+  const allKeys = Object.keys(data[0] || {});
+  const columnKeys = allKeys.filter((k) => k.toLowerCase() !== "rank");
 
   return (
     <div className="mt-10">
@@ -11,30 +47,19 @@ const Table = ({ data, title, keyType, currentUserName }) => {
         </h2>
       )}
 
-      <div
-        className={`overflow-x-auto rounded-2xl shadow-lg border ${
-          isRankings
-            ? "border-yellow-400/50 bg-gradient-to-br from-black via-gray-900 to-yellow-900/40"
-            : "border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/90"
-        } backdrop-blur-md transition-all duration-300`}
-      >
-        <table className="min-w-full border-collapse">
-          <thead
-            className={
-              isRankings
-                ? ""
-                : "bg-gradient-to-r from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800"
-            }
-          >
-            <tr>
-              {Object.keys(data[0]).map((key) => (
+      <div className="overflow-x-auto rounded-2xl shadow-lg border border-blue-200 dark:border-gray-700 bg-white dark:bg-gray-900 transition-all duration-300">
+        <table className="min-w-full border-collapse text-sm">
+          {/* Header */}
+          <thead>
+            <tr className="bg-gradient-to-r from-blue-600 to-blue-400 dark:from-blue-500 dark:to-blue-300 text-white">
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b border-gray-300 dark:border-gray-700 w-16 text-center">
+                Rank
+              </th>
+
+              {columnKeys.map((key) => (
                 <th
                   key={key}
-                  className={`px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b ${
-                    isRankings
-                      ? "text-yellow-300 border-yellow-700/50"
-                      : "text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700"
-                  }`}
+                  className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b border-gray-300 text-white dark:border-gray-700 dark:text-gray-200"
                 >
                   {key.replace(/([A-Z])/g, " $1").trim()}
                 </th>
@@ -42,169 +67,99 @@ const Table = ({ data, title, keyType, currentUserName }) => {
             </tr>
           </thead>
 
+          {/* Body */}
           <tbody>
-            {data.map((row, idx) => {
+            {paginatedData.map((row, idx) => {
+              // absolute rank: if row.rank provided use it, else compute from index
+              const computedIndex = (currentPage - 1) * rowsPerPage + idx + 1;
+              const rowRank =
+                typeof row.rank === "number" && !Number.isNaN(row.rank)
+                  ? row.rank
+                  : computedIndex;
+
               const isCurrentUser =
                 currentUserName &&
-                row.username?.toLowerCase() === currentUserName?.toLowerCase();
+                (row.username || row.userName || "").toString().toLowerCase() ===
+                  currentUserName.toLowerCase();
 
-              let highlightClass = "";
-
-              if (isRankings) {
-                if (isCurrentUser) {
-                  highlightClass =
-                    "bg-blue-700 text-white font-bold text-base scale-[1.03]";
-                }
-                //  else if (row.rank === 1) {
-                //   highlightClass =
-                //     "bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-black font-bold";
-                // } else if (row.rank === 2) {
-                //   highlightClass =
-                //     "bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 text-black";
-                // } else if (row.rank === 3) {
-                //   highlightClass =
-                //     "bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-400 text-black";
-                // } else {
-                //   highlightClass =
-                //     idx % 2 === 0
-                //       ? "bg-gray-950/40 text-yellow-100"
-                //       : "bg-gray-900/40 text-yellow-200";
-                // }
-              }
+              const rowClass = isCurrentUser
+                ? currentUserStyle
+                : computedIndex % 2 === 0
+                ? "bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200"
+                : "bg-gray-50 text-gray-900 dark:bg-gray-700 dark:text-gray-100";
 
               return (
                 <tr
-                  key={idx}
-                  className={`transition duration-200 ${highlightClass} hover:brightness-110`}
+                  key={row.submissionId ?? row.id ?? idx}
+                  className={`transition duration-200 ${rowClass} hover:bg-blue-50 dark:hover:bg-gray-600`}
                 >
-                  {Object.values(row).map((val, i) => (
-                    <td
-                      key={i}
-                      className="px-5 py-3 whitespace-nowrap text-sm border-b border-gray-100 dark:border-gray-700"
-                    >
-                      {val}
-                    </td>
-                  ))}
+                  {/* Rank cell (single source of truth) */}
+                  <td className="px-4 py-3 text-center border-b border-gray-200 dark:border-gray-700">
+                    {getRankIcon(rowRank)}
+                  </td>
+
+                  {/* Data cells (skip any 'rank' field) */}
+                  {columnKeys.map((key) => {
+                    const val = row[key];
+                    return (
+                      <td
+                        key={key}
+                        className="px-5 py-3 whitespace-nowrap border-b border-gray-200 dark:border-gray-700"
+                      >
+                        {key.toLowerCase() === "username" ? (
+                          <span className="flex items-center gap-2">
+                            {isCurrentUser && (
+                              <FaUser className="text-yellow-700 text-base bg-yellow-200 p-1 rounded-full" />
+                            )}
+                            {val}
+                          </span>
+                        ) : (
+                          val
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })}
           </tbody>
         </table>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-b-2xl">
+            <button
+              onClick={handlePrev}
+              disabled={currentPage === 1}
+              className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium ${
+                currentPage === 1
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-blue-600 hover:bg-blue-100 dark:hover:bg-gray-700"
+              }`}
+            >
+              <FaChevronLeft /> Prev
+            </button>
+
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={handleNext}
+              disabled={currentPage === totalPages}
+              className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium ${
+                currentPage === totalPages
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-blue-600 hover:bg-blue-100 dark:hover:bg-gray-700"
+              }`}
+            >
+              Next <FaChevronRight />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default Table;
-
-// import React from "react";
-
-// const Table = ({ data, title, keyType }) => {
-  
-//   if (!data || data.length === 0) return null;
-
-//   const formatHeader = (key) =>
-//     key
-//       .replace(/([A-Z])/g, " $1")
-//       .replace(/^./, (str) => str.toUpperCase())
-//       .trim();
-
-//   const isRankings = keyType === "rankings";
-
-//   return (
-//     <div className="mt-10">
-//       {/* Title */}
-//       {title && (
-//         <h2 className="text-2xl font-bold mb-6 text-blue-900 dark:text-blue-200 border-b border-blue-200 dark:border-gray-700 pb-2 flex items-center gap-2">
-//           {title}
-//         </h2>
-//       )}
-
-//       {/* Table Wrapper */}
-//       <div
-//         className={`overflow-x-auto rounded-2xl shadow-lg border ${
-//           isRankings
-//             ? "border-yellow-400/50 bg-gradient-to-br from-black via-gray-900 to-yellow-900/40"
-//             : "border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/90"
-//         } backdrop-blur-md transition-all duration-300`}
-//       >
-//         <table className="min-w-full border-collapse">
-//           {/* Table Head */}
-//           <thead
-//             className={
-//               isRankings
-//                 ? "bg-gradient-to-r from-yellow-400/20 via-yellow-300/20 to-yellow-500/10"
-//                 : "bg-gradient-to-r from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800"
-//             }
-//           >
-//             <tr>
-//               {Object.keys(data[0]).map((key) => (
-//                 <th
-//                   key={key}
-//                   className={`px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b ${
-//                     isRankings
-//                       ? "text-yellow-300 border-yellow-700/50"
-//                       : "text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700"
-//                   }`}
-//                 >
-//                   {formatHeader(key)}
-//                 </th>
-//               ))}
-//             </tr>
-//           </thead>
-
-//           {/* Table Body */}
-//           <tbody>
-//             {data.map((row, idx) => {
-//               const rank = row.rank;
-//               let highlightClass = "";
-
-//               if (isRankings) {
-//                 // Elite gradient styles for top 3
-//                 if (rank === 1) {
-//                   highlightClass =
-//                     "bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-black font-bold text-lg scale-[1.04]";
-//                 } else if (rank === 2) {
-//                   highlightClass =
-//                     "bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 text-black font-semibold text-base scale-[1.02]";
-//                 } else if (rank === 3) {
-//                   highlightClass =
-//                     "bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-400 text-black font-medium text-sm scale-[1.01]";
-//                 } else {
-//                   highlightClass =
-//                     idx % 2 === 0
-//                       ? "bg-gray-950/40 text-yellow-100"
-//                       : "bg-gray-900/40 text-yellow-200";
-//                 }
-//               } else {
-//                 // Normal table look
-//                 highlightClass =
-//                   idx % 2 === 0
-//                     ? "bg-white/70 dark:bg-gray-800"
-//                     : "bg-blue-50/60 dark:bg-gray-700/50";
-//               }
-
-//               return (
-//                 <tr
-//                   key={idx}
-//                   className={`transition duration-200 ${highlightClass} hover:brightness-110`}
-//                 >
-//                   {Object.values(row).map((val, i) => (
-//                     <td
-//                       key={i}
-//                       className="px-5 py-3 whitespace-nowrap text-sm border-b border-gray-100 dark:border-gray-700"
-//                     >
-//                       {val}
-//                     </td>
-//                   ))}
-//                 </tr>
-//               );
-//             })}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Table;
