@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -122,6 +123,8 @@ public class WaterQualityServiceHelper {
                 reviewsResponseDtos.add(reviewsResponseDto);
             }
         }
-        return reviewsResponseDtos;
+        return reviewsResponseDtos.stream()
+                .sorted(Comparator.comparing(ReviewsResponseDto::getReviewDate).reversed())
+                .collect(Collectors.toList());
     }
 }
