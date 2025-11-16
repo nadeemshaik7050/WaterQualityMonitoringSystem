@@ -49,12 +49,12 @@ export const AuthProvider = ({ children }) => {
       </div>
     );
   }
-
-  if (!authData.authenticated) {
+if (!authData.authenticated) {
+  if (window.location.pathname !== "/register") {
     KeycloakService.doLogin();
-    return null;
   }
-
+  return null;
+}
   return (
     <AuthContext.Provider value={authData}>
       {children}
