@@ -1,0 +1,591 @@
+{
+	"info": {
+		"_postman_id": "a2599391-2647-4ade-99ac-e2ecc38435ee",
+		"name": "WaterQualityMonitoringSystem",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "20661000",
+		"_collection_link": "https://team-kanyarasi-5719.postman.co/workspace/Team-Kanyarasi-Workspace~c0d6779b-dd96-443d-87ab-0b858347c554/collection/20661000-a2599391-2647-4ade-99ac-e2ecc38435ee?action=share&source=collection_link&creator=20661000"
+	},
+	"item": [
+		{
+			"name": "CrowdDataSource",
+			"item": [
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "createUser",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"firstName\": \"Mahesh\",\r\n  \"lastName\": \"Naga\",\r\n  \"email\": \"naga.mahesh@example.com\",\r\n  \"userName\": \"naga12\",\r\n  \"password\": \"admin\",\r\n  \"role\":\"wqm-admin\",\r\n  \"gender\":\"MALE\",\r\n  \"phoneNum\": \"1234567890\",\r\n  \"joinedDate\":\"2024-01-01\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{baseURL}}/crowddata/user/create"
+							},
+							"response": []
+						},
+						{
+							"name": "getUserById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/crowddata/user/get?citizenId=a7a65df6-1037-44d0-80a8-668cfb21a8ae",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"crowddata",
+										"user",
+										"get"
+									],
+									"query": [
+										{
+											"key": "citizenId",
+											"value": "a7a65df6-1037-44d0-80a8-668cfb21a8ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllUsers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{baseURL}}/crowddata/user/allUsers"
+							},
+							"response": []
+						},
+						{
+							"name": "countOfUsers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{baseURL}}/crowddata/user/count"
+							},
+							"response": []
+						},
+						{
+							"name": "toggleActivate",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/crowddata/user/toggleActivate?citizenId=a7a65df6-1037-44d0-80a8-668cfb21a8ae",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"crowddata",
+										"user",
+										"toggleActivate"
+									],
+									"query": [
+										{
+											"key": "citizenId",
+											"value": "a7a65df6-1037-44d0-80a8-668cfb21a8ae"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "updateUser",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"firstName\": \"Sai\",\r\n  \"lastName\": \"PAVAN\",\r\n  \"email\": \"sai.pavan@example.com\",\r\n  \"userName\": \"pavan12\",\r\n  \"role\":\"wqm-user\",\r\n  \"gender\":\"MALE\",\r\n  \"joinedDate\":\"2024-01-01\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{baseURL}}/crowddata/user/update"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "RewardService",
+			"item": [
+				{
+					"name": "Ratings",
+					"item": [
+						{
+							"name": "getRatingById",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{baseURL}}/rewards/rating/get/690754bdce1cef09db765ef5"
+							},
+							"response": []
+						},
+						{
+							"name": "addRating",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "God Badge",
+											"type": "text"
+										},
+										{
+											"key": "minPoints",
+											"value": "2000",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/C:/Users/nadee/Downloads/Photos/Diamond.png"
+										},
+										{
+											"key": "maxPoints",
+											"value": "2500",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{baseURL}}/rewards/rating/add"
+							},
+							"response": []
+						},
+						{
+							"name": "updateRating",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "God Badge",
+											"type": "text"
+										},
+										{
+											"key": "maxPoints",
+											"value": "2502",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/C:/Users/nadee/Downloads/Photos/Bronze.png"
+										},
+										{
+											"key": "minPoints",
+											"value": "2000",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{baseURL}}/rewards/rating/update"
+							},
+							"response": []
+						},
+						{
+							"name": "allRatings",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{baseURL}}/rewards/rating/all"
+							},
+							"response": []
+						},
+						{
+							"name": "countOfActiveRatings",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "\r\n"
+								},
+								"url": "{{baseURL}}/rewards/rating/count"
+							},
+							"response": []
+						},
+						{
+							"name": "toggleActiveRating",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/rewards/rating/toggleRating?ratingId=690b89e9e32fb51e6951b3a4",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"rewards",
+										"rating",
+										"toggleRating"
+									],
+									"query": [
+										{
+											"key": "ratingId",
+											"value": "690b89e9e32fb51e6951b3a4"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Keycloak",
+			"item": [
+				{
+					"name": "getToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData=pm.response.json();\r",
+									"pm.globals.set(\"keycloak_access_token\",jsonData.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "main-service",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "nadeem7050",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "47uEs7i2kgUtVH4ZbMYBoR13jWW4HVJ6",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:8080/realms/WaterQualityMonitoring/protocol/openid-connect/token"
+					},
+					"response": []
+				},
+				{
+					"name": "userportal-token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "user-portal",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "7YgC60KzjkRRcRkPkEEzKPU5X3lcK2X0",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:8080/realms/WaterQualityMonitoring/protocol/openid-connect/token"
+					},
+					"response": []
+				},
+				{
+					"name": "create-users",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJOR1ZJSmlHUE1mVmdodGIyZTBwYWt6bHJsdGdlRWplMnBIek5tV0FUZzJNIn0.eyJleHAiOjE3NjI5NjM2NzgsImlhdCI6MTc2Mjk2MzM3OCwianRpIjoidHJydGNjOmM4YjlmODNlLTVmZTItMjVhNC1jNzExLTk2NTBkMDIzNzcxMSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvV2F0ZXJRdWFsaXR5TW9uaXRvcmluZyIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwibWFpbi1zZXJ2aWNlIiwiYWNjb3VudCJdLCJzdWIiOiJlZjUyYzM5My02ZjI5LTQyYmQtODYxNS1iZmVkNmQ4OTIwYTYiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJ1c2VyLXBvcnRhbCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ3cW0tdXNlciIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy13YXRlcnF1YWxpdHltb25pdG9yaW5nIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJtYW5hZ2UtdXNlcnMiLCJ2aWV3LXVzZXJzIiwicXVlcnktZ3JvdXBzIiwicXVlcnktdXNlcnMiXX0sIm1haW4tc2VydmljZSI6eyJyb2xlcyI6WyJ1c2VyIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImNsaWVudEhvc3QiOiIwOjA6MDowOjA6MDowOjEiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtdXNlci1wb3J0YWwiLCJjbGllbnRBZGRyZXNzIjoiMDowOjA6MDowOjA6MDoxIiwiY2xpZW50X2lkIjoidXNlci1wb3J0YWwifQ.fTc7uLfvqE438lQTOGY2cCP7hmUFU0SGe1OohteNNxBoUfCpgcGfOS8Gl9nXx0JS90WQZaxXlN-MppFrWzgYwY3NJQ-bgVaqamu5_B4b4nAIOs5OYWjogoIYzdVgJP90vHgXZCAmvmzSPNxNcX7A5vHbZUkG_n5Jmax65RLmXKOSnNLQ4vOOHxbay4e6YvKZyVvQbpECjIo_B1KCoSoP8Kn3IIX29dTo-53bSEGlNpcB4FmJhtST1dORcOnnpe47uGDCn5LvyDbQ-b5fHoQ-kkpeGUVVUUQQNEMkEVxbm0WIdYZYlL5JXV6Keqbde8uESWbYN7A683PzTBkyMHzG7w",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"ktm2\",\r\n  \"email\": \"ktr2@exapl.com\",\r\n  \"firstName\": \"kt2\",\r\n  \"lastName\": \"sda\",\r\n  \"enabled\": true,\r\n  \"emailVerified\": false,\r\n  \"credentials\": [\r\n    {\r\n      \"type\": \"password\",\r\n      \"value\": \"admin\",\r\n      \"temporary\": false\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/admin/realms/WaterQualityMonitoring/users"
+					},
+					"response": []
+				},
+				{
+					"name": "get-roles",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJOR1ZJSmlHUE1mVmdodGIyZTBwYWt6bHJsdGdlRWplMnBIek5tV0FUZzJNIn0.eyJleHAiOjE3NjI5NjQzOTMsImlhdCI6MTc2Mjk2NDA5MywianRpIjoidHJydGNjOjJlYzdjNjJjLTE4ZTYtNzcxMy1iYWIxLThmYTdkOTRkZjljYSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvV2F0ZXJRdWFsaXR5TW9uaXRvcmluZyIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwibWFpbi1zZXJ2aWNlIiwiYWNjb3VudCJdLCJzdWIiOiJlZjUyYzM5My02ZjI5LTQyYmQtODYxNS1iZmVkNmQ4OTIwYTYiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJ1c2VyLXBvcnRhbCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ3cW0tdXNlciIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy13YXRlcnF1YWxpdHltb25pdG9yaW5nIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJtYW5hZ2UtdXNlcnMiLCJ2aWV3LXVzZXJzIiwicXVlcnktZ3JvdXBzIiwicXVlcnktdXNlcnMiXX0sIm1haW4tc2VydmljZSI6eyJyb2xlcyI6WyJ1c2VyIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImNsaWVudEhvc3QiOiIwOjA6MDowOjA6MDowOjEiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtdXNlci1wb3J0YWwiLCJjbGllbnRBZGRyZXNzIjoiMDowOjA6MDowOjA6MDoxIiwiY2xpZW50X2lkIjoidXNlci1wb3J0YWwifQ.tW3aDxN-tQvbNEwt9EsUuF-im7V05sG_bmXvbUZ-F86rmTf9PRrv8J4jB8Wj50ICZg-A9vTzUPSqm69aR3y6pztPav6eNt31UdTJn7cUYUfqum8c8aVvjoIDOpQ3fJDaIbeC2OLOnE4ucFdcfagKvmsj583bJNQxBSsvwIWMLNCnQPZDZmxSknqUEeikGldIxJcEJcOSiHK7f88spf0YUKav7y3iRnykzKdR84JyEPc_f5vNz_Ry2RE7eKKWt6RXLROjSr6dp2g2QFL4x1nC7tKSw3n8sJkbDeL7NwhmcrqLfTbBc6YqNBj9Jm-GPznUbVcHy1eV7-C1NB5XG-2c4A",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"ktm\",\r\n  \"email\": \"ktr@exapl.com\",\r\n  \"firstName\": \"ktr\",\r\n  \"lastName\": \"sda\",\r\n  \"enabled\": true,\r\n  \"emailVerified\": false,\r\n  \"credentials\": [\r\n    {\r\n      \"type\": \"password\",\r\n      \"value\": \"admin\",\r\n      \"temporary\": false\r\n    }\r\n  ]\r\n}\r\n"
+						},
+						"url": "http://localhost:8080/admin/realms/WaterQualityMonitoring/roles"
+					},
+					"response": []
+				},
+				{
+					"name": "create-role",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJOR1ZJSmlHUE1mVmdodGIyZTBwYWt6bHJsdGdlRWplMnBIek5tV0FUZzJNIn0.eyJleHAiOjE3NjI5NjM2NzgsImlhdCI6MTc2Mjk2MzM3OCwianRpIjoidHJydGNjOmM4YjlmODNlLTVmZTItMjVhNC1jNzExLTk2NTBkMDIzNzcxMSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvV2F0ZXJRdWFsaXR5TW9uaXRvcmluZyIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwibWFpbi1zZXJ2aWNlIiwiYWNjb3VudCJdLCJzdWIiOiJlZjUyYzM5My02ZjI5LTQyYmQtODYxNS1iZmVkNmQ4OTIwYTYiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJ1c2VyLXBvcnRhbCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ3cW0tdXNlciIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy13YXRlcnF1YWxpdHltb25pdG9yaW5nIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJtYW5hZ2UtdXNlcnMiLCJ2aWV3LXVzZXJzIiwicXVlcnktZ3JvdXBzIiwicXVlcnktdXNlcnMiXX0sIm1haW4tc2VydmljZSI6eyJyb2xlcyI6WyJ1c2VyIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImNsaWVudEhvc3QiOiIwOjA6MDowOjA6MDowOjEiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtdXNlci1wb3J0YWwiLCJjbGllbnRBZGRyZXNzIjoiMDowOjA6MDowOjA6MDoxIiwiY2xpZW50X2lkIjoidXNlci1wb3J0YWwifQ.fTc7uLfvqE438lQTOGY2cCP7hmUFU0SGe1OohteNNxBoUfCpgcGfOS8Gl9nXx0JS90WQZaxXlN-MppFrWzgYwY3NJQ-bgVaqamu5_B4b4nAIOs5OYWjogoIYzdVgJP90vHgXZCAmvmzSPNxNcX7A5vHbZUkG_n5Jmax65RLmXKOSnNLQ4vOOHxbay4e6YvKZyVvQbpECjIo_B1KCoSoP8Kn3IIX29dTo-53bSEGlNpcB4FmJhtST1dORcOnnpe47uGDCn5LvyDbQ-b5fHoQ-kkpeGUVVUUQQNEMkEVxbm0WIdYZYlL5JXV6Keqbde8uESWbYN7A683PzTBkyMHzG7w",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"id\" : \"37e6a8a2-999c-429d-966e-9534a15d55c7\",\r\n    \"name\": \"wqm-user\"\r\n}]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/admin/realms/WaterQualityMonitoring/users/45e930d9-b6df-4ca5-aa7a-39019b38658b/role-mappings/realm"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "UserPortal",
+			"item": [
+				{
+					"name": "submitData",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"description": "Multipart form data for file upload"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "binaries",
+									"description": "Upload image file",
+									"type": "file",
+									"src": [
+										"/C:/Users/nadee/Downloads/Photos/Platinum.png",
+										"/C:/Users/nadee/Downloads/Photos/Diamond.png",
+										"/C:/Users/nadee/Downloads/Photos/Bronze.png"
+									]
+								},
+								{
+									"key": "postalCode",
+									"value": "ABC123",
+									"description": "Upload image file",
+									"type": "text"
+								},
+								{
+									"key": "unit",
+									"value": "tmp",
+									"description": "Upload image file",
+									"type": "text"
+								},
+								{
+									"key": "value",
+									"value": "40",
+									"type": "text"
+								},
+								{
+									"key": "observations",
+									"value": "CLEAR",
+									"type": "text"
+								},
+								{
+									"key": "citizenId",
+									"value": "69d331d6-0757-4ba7-8a2c-59dfef07600a",
+									"type": "text"
+								},
+								{
+									"key": "userName",
+									"value": "nadeem7050",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{baseURL}}/crowddata/waterquality/submit"
+					},
+					"response": []
+				},
+				{
+					"name": "previousReviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/crowddata/waterquality/previousReviews?citizenId=69d331d6-0757-4ba7-8a2c-59dfef07600a",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"crowddata",
+								"waterquality",
+								"previousReviews"
+							],
+							"query": [
+								{
+									"key": "citizenId",
+									"value": "69d331d6-0757-4ba7-8a2c-59dfef07600a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userRankings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseURL}}/crowddata/user/rankings"
+					},
+					"response": []
+				},
+				{
+					"name": "getUserRating",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/rewards/rating/getUserRating?citizenId=690754bdce1cef09db765ef5",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"rewards",
+								"rating",
+								"getUserRating"
+							],
+							"query": [
+								{
+									"key": "citizenId",
+									"value": "690754bdce1cef09db765ef5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "{{keycloak_access_token}}"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": ""
+		}
+	]
+}

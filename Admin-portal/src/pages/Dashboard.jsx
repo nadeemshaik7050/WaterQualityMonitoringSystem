@@ -77,7 +77,7 @@ export default function Dashboard() {
     {
       title: "Max Points User",
       value: topUser?.userName ?? "NA",
-      subValue: topUser?.totalPoints ?? 0,
+      subValue: topUser?.points ?? 0,
       icon: Crown,
       color: "bg-purple-600",
       onClick: handleMaxUserClick, // 👈 integrated
